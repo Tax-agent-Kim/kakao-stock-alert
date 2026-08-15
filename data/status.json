@@ -1,4 +1,16 @@
 {
-  "updated_at": "2026-08-16T01:07:59.904784+09:00",
-  "holdings": []
+  "updated_at": "2026-08-16T01:08:24.876185+09:00",
+  "holdings": [
+    {
+      "id": "msuklafmyuwn",
+      "market": "domestic",
+      "name": "코덱스200",
+      "code": "",
+      "buy_price": 110000,
+      "current_price": null,
+      "change_pct": null,
+      "signal_type": "unknown",
+      "signal_label": "현재가 조회 실패"
+    }
+  ]
 }
