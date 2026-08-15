@@ -1,0 +1,43 @@
+name: 리밸런싱 시세 체크
+
+on:
+  schedule:
+    # 한국시간(KST) 기준 국내장 마감 후 15:35, 미국장 마감 후 06:10 (여름/겨울 서머타임 오차 있을 수 있음)
+    - cron: "35 6 * * 1-5"   # UTC 06:35 = KST 15:35 (평일)
+    - cron: "10 21 * * 1-5"  # UTC 21:10 = KST 06:10 (평일)
+  workflow_dispatch: {}   # 수동 실행 버튼
+  push:
+    paths:
+      - "data/holdings.json"   # 홈페이지에서 종목 추가/삭제로 커밋되면 즉시 재계산
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 의존성 설치
+        run: pip install -r requirements.txt
+
+      - name: 시세 조회 및 알림 발송
+        env:
+          KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+        run: python scripts/check_prices.py
+
+      - name: status.json 변경사항 커밋
+        run: |
+          git config user.name "rebalance-bot"
+          git config user.email "actions@github.com"
+          git add data/status.json
+          git diff --staged --quiet || git commit -m "chore: 시세 갱신 $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
