@@ -1,4 +1,11 @@
 {
   "holdings": [],
-  "watchlist": []
+  "watchlist": [
+    {
+      "id": "msukkjtll0k2",
+      "market": "domestic",
+      "name": "삼성전자",
+      "code": ""
+    }
+  ]
 }
