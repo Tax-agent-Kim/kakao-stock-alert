@@ -1,11 +1,4 @@
 {
   "holdings": [],
-  "watchlist": [
-    {
-      "id": "w1",
-      "market": "domestic",
-      "name": "현대건설",
-      "code": "000720"
-    }
-  ]
+  "watchlist": []
 }
