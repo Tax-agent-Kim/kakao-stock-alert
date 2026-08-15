@@ -1,4 +1,27 @@
 {
-  "updated_at": null,
-  "holdings": []
+  "updated_at": "2026-08-16T00:29:13.778729+09:00",
+  "holdings": [
+    {
+      "id": "h1",
+      "market": "domestic",
+      "name": "삼성전자",
+      "code": "005930",
+      "buy_price": 70000,
+      "current_price": 274500.0,
+      "change_pct": 292.14,
+      "signal_type": "sellall",
+      "signal_label": "전량 매도"
+    },
+    {
+      "id": "h2",
+      "market": "overseas",
+      "name": "Apple",
+      "code": "AAPL",
+      "buy_price": 180.0,
+      "current_price": 305.92999267578125,
+      "change_pct": 69.96,
+      "signal_type": "sell",
+      "signal_label": "40% 매도"
+    }
+  ]
 }
