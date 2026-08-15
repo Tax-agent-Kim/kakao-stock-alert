@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>리밸런싱 장부</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+  :root{
+    --paper:#EEF0EA; --paper-2:#E4E7DF; --ink:#1C2B28; --ink-soft:#5B6A63;
+    --line:#C7CDC1; --jade:#1F6F5C; --jade-soft:#DDEAE3; --rust:#A63A2E;
+    --rust-soft:#F3DEDA; --amber:#9C6B14; --amber-soft:#F1E4C8; --navy:#22344A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'IBM Plex Sans KR',sans-serif;background:var(--paper);color:var(--ink);}
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px;}
+  .masthead{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:22px;}
+  .masthead h1{font-family:'Source Serif 4',serif;font-weight:700;font-size:26px;margin:0;}
+  .masthead .sub{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
+  .updated{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);text-align:right;}
+  .alert-box{border:1.5px solid var(--rust);background:var(--rust-soft);border-radius:10px;padding:14px 16px;margin-bottom:22px;}
+  .alert-box.empty{border-color:var(--line);background:var(--paper-2);}
+  .alert-title{font-weight:700;font-size:13px;margin-bottom:8px;}
+  .alert-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px dashed rgba(0,0,0,.12);}
+  .alert-row:first-of-type{border-top:none;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:20px;}
+  .card h2{font-family:'Source Serif 4',serif;font-size:16px;margin:0 0 12px;}
+  .row{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13px;}
+  .row:first-of-type{border-top:none;}
+  .row-name{font-weight:600;}
+  .row-ticker{color:var(--ink-soft);font-family:'IBM Plex Mono';font-size:11px;margin-left:6px;}
+  .market-tag{font-size:10.5px;font-family:'IBM Plex Mono';padding:2px 6px;border-radius:4px;background:var(--paper-2);color:var(--ink-soft);width:fit-content;}
+  .change-pct{font-family:'IBM Plex Mono';font-weight:600;font-size:13px;text-align:right;min-width:64px;}
+  .change-pct.up{color:var(--jade);} .change-pct.down{color:var(--rust);} .change-pct.flat{color:var(--ink-soft);}
+  .signal{font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:20px;text-align:center;white-space:nowrap;}
+  .signal.hold{background:var(--jade-soft);color:var(--jade);}
+  .signal.buy{background:#DCE6F1;color:var(--navy);}
+  .signal.sell{background:var(--amber-soft);color:var(--amber);}
+  .signal.sellall{background:var(--rust-soft);color:var(--rust);}
+  .signal.unknown{background:var(--paper-2);color:var(--ink-soft);}
+  .empty-state{padding:24px 0;text-align:center;color:var(--ink-soft);font-size:13px;}
+  .note{font-size:12px;color:var(--ink-soft);line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <div>
+      <h1>리밸런싱 장부</h1>
+      <div class="sub">매입가 대비 등락률 기준 자동 매매 신호 · GitHub Actions 자동 갱신</div>
+    </div>
+    <div class="updated" id="updatedAt">불러오는 중...</div>
+  </div>
+
+  <div id="alertBox"></div>
+
+  <div class="card">
+    <h2>보유종목</h2>
+    <div id="holdingsList"></div>
+  </div>
+
+  <div class="card">
+    <h2>관심종목</h2>
+    <div id="watchList"></div>
+  </div>
+
+  <p class="note">
+    보유종목은 <code>data/holdings.json</code> 파일을 GitHub에서 직접 수정해 관리합니다.
+    시세와 신호는 GitHub Actions가 정해진 시간에 자동으로 갱신합니다 (<code>data/status.json</code>).
+  </p>
+</div>
+
+<script>
+  function fmtPct(c){ if(c===null||c===undefined) return '—'; return (c>0?'+':'')+c.toFixed(1)+'%'; }
+  function pctClass(c){ if(c===null||c===undefined) return 'flat'; if(c>0.001) return 'up'; if(c<-0.001) return 'down'; return 'flat'; }
+  function signalHTML(type, label){
+    const cls = type==='buy'?'buy':type==='sell'?'sell':type==='sellall'?'sellall':type==='unknown'?'unknown':'hold';
+    return `<span class="signal ${cls}">${label}</span>`;
+  }
+
+  async function load(){
+    const [holdingsRes, statusRes] = await Promise.all([
+      fetch('data/holdings.json').then(r=>r.json()).catch(()=>({holdings:[],watchlist:[]})),
+      fetch('data/status.json').then(r=>r.json()).catch(()=>null),
+    ]);
+
+    const watchlist = holdingsRes.watchlist || [];
+    const statusMap = {};
+    let updatedAt = null;
+    if(statusRes){
+      updatedAt = statusRes.updated_at;
+      (statusRes.holdings||[]).forEach(h=>{ statusMap[h.id] = h; });
+    }
+
+    document.getElementById('updatedAt').textContent = updatedAt
+      ? '마지막 갱신: ' + new Date(updatedAt).toLocaleString('ko-KR')
+      : '아직 갱신 데이터 없음 (Actions 최초 실행 대기)';
+
+    const merged = (holdingsRes.holdings||[]).map(h=>({...h, ...(statusMap[h.id]||{})}));
+
+    // alert box
+    const needsAction = merged.filter(h=>['buy','sell','sellall'].includes(h.signal_type));
+    const box = document.getElementById('alertBox');
+    if(needsAction.length===0){
+      box.innerHTML = `<div class="alert-box empty"><div class="alert-title">🔔 알림</div><div style="font-size:12.5px;color:var(--ink-soft);">현재 조치가 필요한 종목이 없습니다.</div></div>`;
+    } else {
+      let rows = needsAction.map(h=>`<div class="alert-row"><span><b>${h.name}</b> (${fmtPct(h.change_pct)})</span>${signalHTML(h.signal_type, h.signal_label)}</div>`).join('');
+      box.innerHTML = `<div class="alert-box"><div class="alert-title">🔔 조치가 필요한 종목 (${needsAction.length})</div>${rows}</div>`;
+    }
+
+    // holdings list
+    const hList = document.getElementById('holdingsList');
+    if(merged.length===0){
+      hList.innerHTML = `<div class="empty-state">data/holdings.json 에 종목을 추가해 주세요.</div>`;
+    } else {
+      hList.innerHTML = merged.map(h=>`
+        <div class="row">
+          <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
+          <div><span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
+            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${h.buy_price} · 현재가 ${h.current_price ?? '—'}</div>
+          </div>
+          <span class="change-pct ${pctClass(h.change_pct)}">${fmtPct(h.change_pct)}</span>
+          ${signalHTML(h.signal_type||'unknown', h.signal_label||'대기중')}
+        </div>`).join('');
+    }
+
+    // watchlist
+    const wList = document.getElementById('watchList');
+    if(watchlist.length===0){
+      wList.innerHTML = `<div class="empty-state">data/holdings.json 의 watchlist 배열에 종목을 추가해 주세요.</div>`;
+    } else {
+      wList.innerHTML = watchlist.map(w=>`
+        <div class="row" style="grid-template-columns:auto 1fr auto;">
+          <span>★</span>
+          <div><span class="row-name">${w.name}</span><span class="row-ticker">${w.code||''}</span></div>
+          <span class="market-tag">${w.market==='domestic'?'국내':'해외'}</span>
+        </div>`).join('');
+    }
+  }
+  load();
+</script>
+</body>
+</html>

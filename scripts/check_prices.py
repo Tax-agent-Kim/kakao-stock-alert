@@ -1,0 +1,192 @@
+"""
+리밸런싱 시세 체크 + 카카오톡 알림 스크립트
+GitHub Actions에서 정해진 시간에 자동 실행됩니다.
+
+필요한 환경변수(GitHub Secrets로 등록):
+  KAKAO_REST_API_KEY   : 카카오 디벨로퍼스 REST API 키
+  KAKAO_REFRESH_TOKEN  : 최초 1회 발급받은 리프레시 토큰 (scripts/get_kakao_token.py로 발급)
+
+동작:
+  1. data/holdings.json 을 읽어 보유종목 목록을 가져옴
+  2. 국내주식은 네이버금융 시세(비공식), 해외주식은 yfinance로 현재가 조회
+  3. 사용자의 매매 원칙에 따라 신호(매수/매도/보유) 계산
+  4. 조치가 필요한 종목이 있으면 카카오톡 "나에게 보내기"로 알림 발송
+  5. data/status.json 에 계산 결과 저장 (GitHub Pages 대시보드가 이 파일을 읽음)
+"""
+
+import json
+import os
+import sys
+from datetime import datetime, timezone, timedelta
+
+import requests
+
+KST = timezone(timedelta(hours=9))
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+HOLDINGS_PATH = os.path.join(ROOT, "data", "holdings.json")
+STATUS_PATH = os.path.join(ROOT, "data", "status.json")
+
+
+# ---------- 1. 매매 원칙 ----------
+def get_signal(change_pct):
+    """매입가 대비 등락률(%)을 받아 신호를 반환한다."""
+    if change_pct is None:
+        return {"type": "unknown", "label": "현재가 조회 실패", "amount": None}
+    c = change_pct
+    if c <= -25:
+        return {"type": "buy", "label": "추가매수 25%", "amount": 25}
+    if c <= -15:
+        return {"type": "buy", "label": "추가매수 10%", "amount": 10}
+    if c <= -5:
+        return {"type": "hold", "label": "관망 (조치 없음)", "amount": None}
+    if c >= 100:
+        return {"type": "sellall", "label": "전량 매도", "amount": 100}
+    if c >= 60:
+        return {"type": "sell", "label": "40% 매도", "amount": 40}
+    if c >= 45:
+        return {"type": "sell", "label": "30% 매도", "amount": 30}
+    if c >= 35:
+        return {"type": "sell", "label": "20% 매도", "amount": 20}
+    if c >= 25:
+        return {"type": "sell", "label": "10% 매도", "amount": 10}
+    if c >= 5:
+        return {"type": "hold", "label": "보유 유지", "amount": None}
+    return {"type": "hold", "label": "관망 (조치 없음)", "amount": None}
+
+
+# ---------- 2. 시세 조회 ----------
+def get_domestic_price(code):
+    """네이버금융 비공식 API로 국내 종목 현재가를 가져온다.
+    이 엔드포인트는 비공식이라 예고 없이 바뀔 수 있다.
+    """
+    url = f"https://polling.finance.naver.com/api/realtime/domestic/stock/{code}"
+    try:
+        r = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+        r.raise_for_status()
+        data = r.json()
+        price = data["datas"][0]["closePrice"]
+        return float(str(price).replace(",", ""))
+    except Exception as e:
+        print(f"[WARN] 국내 시세 조회 실패 ({code}): {e}", file=sys.stderr)
+        return None
+
+
+def get_overseas_price(ticker):
+    """yfinance로 해외 종목 현재가(직전 종가)를 가져온다."""
+    try:
+        import yfinance as yf
+        t = yf.Ticker(ticker)
+        hist = t.history(period="1d")
+        if hist.empty:
+            return None
+        return float(hist["Close"].iloc[-1])
+    except Exception as e:
+        print(f"[WARN] 해외 시세 조회 실패 ({ticker}): {e}", file=sys.stderr)
+        return None
+
+
+def get_current_price(market, code):
+    if market == "domestic":
+        return get_domestic_price(code)
+    return get_overseas_price(code)
+
+
+# ---------- 3. 카카오톡 나에게 보내기 ----------
+KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token"
+KAKAO_SEND_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
+
+
+def refresh_kakao_access_token(rest_api_key, refresh_token):
+    resp = requests.post(
+        KAKAO_TOKEN_URL,
+        data={
+            "grant_type": "refresh_token",
+            "client_id": rest_api_key,
+            "refresh_token": refresh_token,
+        },
+        timeout=10,
+    )
+    resp.raise_for_status()
+    payload = resp.json()
+    access_token = payload["access_token"]
+    new_refresh_token = payload.get("refresh_token")  # 카카오가 새 리프레시 토큰을 줄 때도 있음
+    if new_refresh_token:
+        print(
+            "[INFO] 카카오가 새 refresh_token을 발급했습니다. "
+            "GitHub Secrets의 KAKAO_REFRESH_TOKEN 값을 아래 값으로 갱신해 주세요:"
+        )
+        print(f"[INFO] {new_refresh_token}")
+    return access_token
+
+
+def send_kakao_message(access_token, text, link_url="https://github.com"):
+    template_object = {
+        "object_type": "text",
+        "text": text,
+        "link": {"web_url": link_url, "mobile_web_url": link_url},
+        "button_title": "대시보드 열기",
+    }
+    resp = requests.post(
+        KAKAO_SEND_URL,
+        headers={"Authorization": f"Bearer {access_token}"},
+        data={"template_object": json.dumps(template_object, ensure_ascii=False)},
+        timeout=10,
+    )
+    if resp.status_code != 200:
+        print(f"[WARN] 카카오 메시지 발송 실패: {resp.status_code} {resp.text}", file=sys.stderr)
+    return resp.status_code == 200
+
+
+# ---------- 4. 메인 로직 ----------
+def main():
+    with open(HOLDINGS_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    holdings = data.get("holdings", [])
+    results = []
+    action_lines = []
+
+    for h in holdings:
+        cur = get_current_price(h["market"], h["code"])
+        buy = h["buy_price"]
+        change = None
+        if cur is not None and buy:
+            change = (cur - buy) / buy * 100
+        sig = get_signal(change)
+        results.append(
+            {
+                **h,
+                "current_price": cur,
+                "change_pct": round(change, 2) if change is not None else None,
+                "signal_type": sig["type"],
+                "signal_label": sig["label"],
+            }
+        )
+        if sig["type"] in ("buy", "sell", "sellall"):
+            pct_str = f"{change:+.1f}%" if change is not None else "N/A"
+            action_lines.append(f"- {h['name']} ({pct_str}) → {sig['label']}")
+
+    status = {
+        "updated_at": datetime.now(KST).isoformat(),
+        "holdings": results,
+    }
+    with open(STATUS_PATH, "w", encoding="utf-8") as f:
+        json.dump(status, f, ensure_ascii=False, indent=2)
+    print(f"[INFO] status.json 저장 완료 ({len(results)}개 종목)")
+
+    if action_lines:
+        rest_api_key = os.environ.get("KAKAO_REST_API_KEY")
+        refresh_token = os.environ.get("KAKAO_REFRESH_TOKEN")
+        if not rest_api_key or not refresh_token:
+            print("[WARN] KAKAO_REST_API_KEY / KAKAO_REFRESH_TOKEN 환경변수가 없어 알림을 건너뜁니다.")
+            return
+        access_token = refresh_kakao_access_token(rest_api_key, refresh_token)
+        message = "📈 리밸런싱 알림\n\n" + "\n".join(action_lines)
+        ok = send_kakao_message(access_token, message)
+        print("[INFO] 카카오톡 알림 발송" + (" 성공" if ok else " 실패"))
+    else:
+        print("[INFO] 조치가 필요한 종목이 없어 알림을 보내지 않습니다.")
+
+
+if __name__ == "__main__":
+    main()

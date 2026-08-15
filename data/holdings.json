@@ -1,0 +1,26 @@
+{
+  "holdings": [
+    {
+      "id": "h1",
+      "market": "domestic",
+      "name": "삼성전자",
+      "code": "005930",
+      "buy_price": 70000
+    },
+    {
+      "id": "h2",
+      "market": "overseas",
+      "name": "Apple",
+      "code": "AAPL",
+      "buy_price": 180.0
+    }
+  ],
+  "watchlist": [
+    {
+      "id": "w1",
+      "market": "domestic",
+      "name": "현대건설",
+      "code": "000720"
+    }
+  ]
+}
