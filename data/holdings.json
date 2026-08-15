@@ -1,5 +1,13 @@
 {
-  "holdings": [],
+  "holdings": [
+    {
+      "id": "msuklafmyuwn",
+      "market": "domestic",
+      "name": "코덱스200",
+      "code": "",
+      "buy_price": 110000
+    }
+  ],
   "watchlist": [
     {
       "id": "msukkjtll0k2",
