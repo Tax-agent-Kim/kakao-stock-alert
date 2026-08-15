@@ -13,22 +13,43 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;font-family:'IBM Plex Sans KR',sans-serif;background:var(--paper);color:var(--ink);}
-  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px;}
-  .masthead{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:22px;}
+  .wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px;}
+  .masthead{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:20px;}
   .masthead h1{font-family:'Source Serif 4',serif;font-weight:700;font-size:26px;margin:0;}
   .masthead .sub{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
-  .updated{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);text-align:right;}
+  .updated{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);text-align:right;}
+  .gear-btn{background:none;border:1px solid var(--line);border-radius:6px;padding:5px 9px;cursor:pointer;font-size:13px;color:var(--ink-soft);margin-left:8px;}
+  .gear-btn:hover{color:var(--ink);border-color:var(--ink-soft);}
+
+  .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--paper-2);padding:3px;border-radius:8px;width:fit-content;}
+  .tab-btn{font-family:'IBM Plex Sans KR';font-size:13.5px;font-weight:600;padding:8px 16px;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;border-radius:6px;}
+  .tab-btn.active{background:var(--ink);color:var(--paper);}
+  .panel{display:none;} .panel.active{display:block;}
+
   .alert-box{border:1.5px solid var(--rust);background:var(--rust-soft);border-radius:10px;padding:14px 16px;margin-bottom:22px;}
   .alert-box.empty{border-color:var(--line);background:var(--paper-2);}
   .alert-title{font-weight:700;font-size:13px;margin-bottom:8px;}
   .alert-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px dashed rgba(0,0,0,.12);}
   .alert-row:first-of-type{border-top:none;}
+
   .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:20px;}
   .card h2{font-family:'Source Serif 4',serif;font-size:16px;margin:0 0 12px;}
-  .row{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13px;}
+
+  .banner{border:1px solid var(--amber);background:var(--amber-soft);color:#6b4a0e;border-radius:8px;padding:12px 14px;font-size:12.5px;margin-bottom:18px;}
+  .banner a, .banner button.link{color:#6b4a0e;text-decoration:underline;cursor:pointer;background:none;border:none;font-size:12.5px;padding:0;font-family:inherit;}
+
+  .add-form{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;}
+  .add-form input, .add-form select{font-family:'IBM Plex Sans KR';font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);}
+  .add-form .name{width:130px;} .add-form .num{width:100px;font-family:'IBM Plex Mono';}
+  .btn{font-family:'IBM Plex Sans KR';font-weight:600;font-size:13px;padding:8px 14px;border-radius:6px;border:none;cursor:pointer;background:var(--ink);color:var(--paper);}
+  .btn:hover{background:var(--navy);} .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn.ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);}
+  .btn.danger{background:var(--rust);}
+
+  .row{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13px;}
   .row:first-of-type{border-top:none;}
-  .row-name{font-weight:600;}
-  .row-ticker{color:var(--ink-soft);font-family:'IBM Plex Mono';font-size:11px;margin-left:6px;}
+  .row.watch{grid-template-columns:auto 1fr auto auto;}
+  .row-name{font-weight:600;} .row-ticker{color:var(--ink-soft);font-family:'IBM Plex Mono';font-size:11px;margin-left:6px;}
   .market-tag{font-size:10.5px;font-family:'IBM Plex Mono';padding:2px 6px;border-radius:4px;background:var(--paper-2);color:var(--ink-soft);width:fit-content;}
   .change-pct{font-family:'IBM Plex Mono';font-weight:600;font-size:13px;text-align:right;min-width:64px;}
   .change-pct.up{color:var(--jade);} .change-pct.down{color:var(--rust);} .change-pct.flat{color:var(--ink-soft);}
@@ -38,8 +59,23 @@
   .signal.sell{background:var(--amber-soft);color:var(--amber);}
   .signal.sellall{background:var(--rust-soft);color:var(--rust);}
   .signal.unknown{background:var(--paper-2);color:var(--ink-soft);}
+  .del-btn{background:none;border:none;color:#B3BAB1;cursor:pointer;font-size:15px;}
+  .del-btn:hover{color:var(--rust);}
   .empty-state{padding:24px 0;text-align:center;color:var(--ink-soft);font-size:13px;}
   .note{font-size:12px;color:var(--ink-soft);line-height:1.6;}
+
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);align-items:center;justify-content:center;z-index:10;}
+  .modal-bg.active{display:flex;}
+  .modal{background:#fff;border-radius:12px;padding:22px;width:min(420px,90vw);}
+  .modal h3{font-family:'Source Serif 4',serif;margin:0 0 6px;font-size:17px;}
+  .modal p{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;line-height:1.6;}
+  .modal label{display:block;font-size:12px;font-weight:600;margin:10px 0 4px;}
+  .modal input, .modal select{width:100%;font-family:'IBM Plex Sans KR';font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;}
+  .modal .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+  .status-msg{font-size:12px;margin-top:10px;min-height:16px;}
+  .status-msg.err{color:var(--rust);} .status-msg.ok{color:var(--jade);}
+
+  @media (max-width:640px){ .row{grid-template-columns:1fr;gap:6px;} .add-form input,.add-form .name{width:100%;} }
 </style>
 </head>
 <body>
@@ -49,95 +85,367 @@
       <h1>리밸런싱 장부</h1>
       <div class="sub">매입가 대비 등락률 기준 자동 매매 신호 · GitHub Actions 자동 갱신</div>
     </div>
-    <div class="updated" id="updatedAt">불러오는 중...</div>
+    <div style="display:flex;align-items:center;">
+      <div class="updated" id="updatedAt">불러오는 중...</div>
+      <button class="gear-btn" id="settingsBtn" title="GitHub 연결 설정">⚙ 설정</button>
+    </div>
   </div>
 
-  <div id="alertBox"></div>
+  <div id="connectBanner"></div>
 
-  <div class="card">
-    <h2>보유종목</h2>
-    <div id="holdingsList"></div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="dashboard">대시보드</button>
+    <button class="tab-btn" data-tab="holdings">보유종목 관리</button>
+    <button class="tab-btn" data-tab="watchlist">관심종목 관리</button>
   </div>
 
-  <div class="card">
-    <h2>관심종목</h2>
-    <div id="watchList"></div>
+  <div class="panel active" id="panel-dashboard">
+    <div id="alertBox"></div>
+    <div class="card">
+      <h2>보유종목 현황</h2>
+      <div id="dashList"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-holdings">
+    <div class="card">
+      <h2>보유종목 추가</h2>
+      <div class="add-form">
+        <select id="h-market"><option value="domestic">국내</option><option value="overseas">해외</option></select>
+        <input class="name" id="h-name" placeholder="종목명"/>
+        <input class="num" id="h-code" placeholder="코드/티커"/>
+        <input class="num" id="h-buy" placeholder="매입가" type="number" step="any"/>
+        <button class="btn" id="h-add-btn">추가</button>
+      </div>
+      <div id="h-status" class="status-msg"></div>
+      <div id="holdingsList"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-watchlist">
+    <div class="card">
+      <h2>관심종목 추가</h2>
+      <div class="add-form">
+        <select id="w-market"><option value="domestic">국내</option><option value="overseas">해외</option></select>
+        <input class="name" id="w-name" placeholder="종목명"/>
+        <input class="num" id="w-code" placeholder="코드/티커"/>
+        <button class="btn" id="w-add-btn">즐겨찾기 추가</button>
+      </div>
+      <div id="w-status" class="status-msg"></div>
+      <div id="watchList"></div>
+    </div>
   </div>
 
   <p class="note">
-    보유종목은 <code>data/holdings.json</code> 파일을 GitHub에서 직접 수정해 관리합니다.
-    시세와 신호는 GitHub Actions가 정해진 시간에 자동으로 갱신합니다 (<code>data/status.json</code>).
+    여기서 추가·삭제한 내용은 저장소의 <code>data/holdings.json</code>에 자동으로 커밋됩니다.
+    커밋되면 GitHub Actions가 곧바로 시세를 다시 계산합니다 (보통 1~2분 소요).
   </p>
 </div>
 
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <h3>GitHub 연결 설정</h3>
+    <p>
+      이 홈페이지에서 종목을 추가·수정하려면 저장소에 커밋할 권한이 있는 GitHub 토큰이 필요합니다.
+      토큰은 이 브라우저에만 저장되며 다른 곳으로 전송되지 않습니다.
+    </p>
+    <label>GitHub 사용자명</label>
+    <input id="cfg-owner" placeholder="예: davidkim"/>
+    <label>저장소 이름</label>
+    <input id="cfg-repo" placeholder="예: kakao-stock-alert"/>
+    <label>Personal Access Token (fine-grained, Contents: Read/Write)</label>
+    <input id="cfg-token" type="password" placeholder="github_pat_..."/>
+    <div id="cfg-status" class="status-msg"></div>
+    <div class="actions">
+      <button class="btn ghost" id="cfg-clear">연결 해제</button>
+      <button class="btn" id="cfg-save">저장</button>
+    </div>
+  </div>
+</div>
+
 <script>
+(function(){
+  const LS_KEY = 'rebalance_gh_config';
+
+  function getConfig(){
+    try{ return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); }catch(e){ return null; }
+  }
+  function setConfig(cfg){ localStorage.setItem(LS_KEY, JSON.stringify(cfg)); }
+  function clearConfig(){ localStorage.removeItem(LS_KEY); }
+
+  function guessOwnerRepo(){
+    const host = location.hostname;
+    const parts = location.pathname.split('/').filter(Boolean);
+    if(host.endsWith('.github.io') && parts.length>0){
+      return { owner: host.split('.')[0], repo: parts[0] };
+    }
+    return { owner:'', repo:'' };
+  }
+
+  function utf8ToB64(str){ return btoa(unescape(encodeURIComponent(str))); }
+  function b64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
+
+  async function ghGetFile(cfg, path){
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${cfg.token}`, Accept: 'application/vnd.github+json' } });
+    if(!res.ok) throw new Error(`GitHub 조회 실패 (${res.status})`);
+    const json = await res.json();
+    return { data: JSON.parse(b64ToUtf8(json.content)), sha: json.sha };
+  }
+
+  async function ghPutFile(cfg, path, dataObj, sha, message){
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
+    const body = { message, content: utf8ToB64(JSON.stringify(dataObj, null, 2)), sha };
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${cfg.token}`, Accept: 'application/vnd.github+json', 'Content-Type':'application/json' },
+      body: JSON.stringify(body),
+    });
+    if(!res.ok){
+      const t = await res.text();
+      throw new Error(`GitHub 저장 실패 (${res.status}): ${t}`);
+    }
+    return res.json();
+  }
+
   function fmtPct(c){ if(c===null||c===undefined) return '—'; return (c>0?'+':'')+c.toFixed(1)+'%'; }
   function pctClass(c){ if(c===null||c===undefined) return 'flat'; if(c>0.001) return 'up'; if(c<-0.001) return 'down'; return 'flat'; }
   function signalHTML(type, label){
     const cls = type==='buy'?'buy':type==='sell'?'sell':type==='sellall'?'sellall':type==='unknown'?'unknown':'hold';
     return `<span class="signal ${cls}">${label}</span>`;
   }
+  function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
-  async function load(){
-    const [holdingsRes, statusRes] = await Promise.all([
-      fetch('data/holdings.json').then(r=>r.json()).catch(()=>({holdings:[],watchlist:[]})),
-      fetch('data/status.json').then(r=>r.json()).catch(()=>null),
-    ]);
+  let cfg = getConfig();
+  let holdingsFile = { holdings: [], watchlist: [] };
+  let statusData = null;
 
-    const watchlist = holdingsRes.watchlist || [];
-    const statusMap = {};
-    let updatedAt = null;
-    if(statusRes){
-      updatedAt = statusRes.updated_at;
-      (statusRes.holdings||[]).forEach(h=>{ statusMap[h.id] = h; });
+  async function loadPublicData(){
+    try{
+      const [h, s] = await Promise.all([
+        fetch('data/holdings.json', {cache:'no-store'}).then(r=>r.json()),
+        fetch('data/status.json', {cache:'no-store'}).then(r=>r.json()).catch(()=>null),
+      ]);
+      holdingsFile = h;
+      statusData = s;
+    }catch(e){ console.error(e); }
+  }
+
+  function renderConnectBanner(){
+    const el = document.getElementById('connectBanner');
+    if(cfg && cfg.owner && cfg.repo && cfg.token){
+      el.innerHTML = '';
+    } else {
+      el.innerHTML = `<div class="banner">종목을 추가·삭제하려면 먼저 GitHub 연결이 필요합니다.
+        <button class="link" id="bannerConnectBtn">지금 설정하기 →</button></div>`;
+      document.getElementById('bannerConnectBtn').onclick = openSettings;
     }
+  }
 
-    document.getElementById('updatedAt').textContent = updatedAt
-      ? '마지막 갱신: ' + new Date(updatedAt).toLocaleString('ko-KR')
-      : '아직 갱신 데이터 없음 (Actions 최초 실행 대기)';
+  function mergedHoldings(){
+    const statusMap = {};
+    (statusData?.holdings || []).forEach(h=>{ statusMap[h.id] = h; });
+    return (holdingsFile.holdings || []).map(h => ({...h, ...(statusMap[h.id]||{})}));
+  }
 
-    const merged = (holdingsRes.holdings||[]).map(h=>({...h, ...(statusMap[h.id]||{})}));
+  function renderDashboard(){
+    document.getElementById('updatedAt').textContent = statusData?.updated_at
+      ? '마지막 갱신: ' + new Date(statusData.updated_at).toLocaleString('ko-KR')
+      : '아직 갱신 데이터 없음';
 
-    // alert box
+    const merged = mergedHoldings();
     const needsAction = merged.filter(h=>['buy','sell','sellall'].includes(h.signal_type));
     const box = document.getElementById('alertBox');
     if(needsAction.length===0){
       box.innerHTML = `<div class="alert-box empty"><div class="alert-title">🔔 알림</div><div style="font-size:12.5px;color:var(--ink-soft);">현재 조치가 필요한 종목이 없습니다.</div></div>`;
     } else {
-      let rows = needsAction.map(h=>`<div class="alert-row"><span><b>${h.name}</b> (${fmtPct(h.change_pct)})</span>${signalHTML(h.signal_type, h.signal_label)}</div>`).join('');
+      const rows = needsAction.map(h=>`<div class="alert-row"><span><b>${h.name}</b> (${fmtPct(h.change_pct)})</span>${signalHTML(h.signal_type, h.signal_label)}</div>`).join('');
       box.innerHTML = `<div class="alert-box"><div class="alert-title">🔔 조치가 필요한 종목 (${needsAction.length})</div>${rows}</div>`;
     }
 
-    // holdings list
-    const hList = document.getElementById('holdingsList');
-    if(merged.length===0){
-      hList.innerHTML = `<div class="empty-state">data/holdings.json 에 종목을 추가해 주세요.</div>`;
-    } else {
-      hList.innerHTML = merged.map(h=>`
-        <div class="row">
+    const list = document.getElementById('dashList');
+    list.innerHTML = merged.length===0
+      ? `<div class="empty-state">보유종목 관리 탭에서 종목을 추가해 주세요.</div>`
+      : merged.map(h=>`
+        <div class="row" style="grid-template-columns:auto 1fr auto auto;">
           <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
           <div><span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
-            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${h.buy_price} · 현재가 ${h.current_price ?? '—'}</div>
-          </div>
+            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${h.buy_price} · 현재가 ${h.current_price ?? '—'}</div></div>
           <span class="change-pct ${pctClass(h.change_pct)}">${fmtPct(h.change_pct)}</span>
           ${signalHTML(h.signal_type||'unknown', h.signal_label||'대기중')}
         </div>`).join('');
-    }
+  }
 
-    // watchlist
-    const wList = document.getElementById('watchList');
-    if(watchlist.length===0){
-      wList.innerHTML = `<div class="empty-state">data/holdings.json 의 watchlist 배열에 종목을 추가해 주세요.</div>`;
-    } else {
-      wList.innerHTML = watchlist.map(w=>`
-        <div class="row" style="grid-template-columns:auto 1fr auto;">
+  function renderHoldingsManage(){
+    const list = document.getElementById('holdingsList');
+    const merged = mergedHoldings();
+    list.innerHTML = merged.length===0
+      ? `<div class="empty-state">아직 보유종목이 없습니다.</div>`
+      : merged.map(h=>`
+        <div class="row">
+          <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
+          <div><span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
+            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${h.buy_price}</div></div>
+          <span class="change-pct ${pctClass(h.change_pct)}">${fmtPct(h.change_pct)}</span>
+          ${signalHTML(h.signal_type||'unknown', h.signal_label||'대기중')}
+          <button class="del-btn" data-id="${h.id}" title="삭제">✕</button>
+        </div>`).join('');
+    list.querySelectorAll('.del-btn').forEach(btn=>{ btn.onclick = ()=>removeHolding(btn.dataset.id); });
+  }
+
+  function renderWatchManage(){
+    const list = document.getElementById('watchList');
+    const wl = holdingsFile.watchlist || [];
+    list.innerHTML = wl.length===0
+      ? `<div class="empty-state">관심종목이 없습니다.</div>`
+      : wl.map(w=>`
+        <div class="row watch">
           <span>★</span>
           <div><span class="row-name">${w.name}</span><span class="row-ticker">${w.code||''}</span></div>
           <span class="market-tag">${w.market==='domestic'?'국내':'해외'}</span>
+          <button class="del-btn" data-id="${w.id}" title="삭제">✕</button>
         </div>`).join('');
+    list.querySelectorAll('.del-btn').forEach(btn=>{ btn.onclick = ()=>removeWatch(btn.dataset.id); });
+  }
+
+  function renderAll(){
+    renderConnectBanner();
+    renderDashboard();
+    renderHoldingsManage();
+    renderWatchManage();
+  }
+
+  function requireConfig(){
+    if(!cfg || !cfg.owner || !cfg.repo || !cfg.token){ openSettings(); return false; }
+    return true;
+  }
+
+  async function syncAndSave(mutateFn, statusElId){
+    const statusEl = document.getElementById(statusElId);
+    statusEl.textContent = 'GitHub에 저장 중...';
+    statusEl.className = 'status-msg';
+    try{
+      const latest = await ghGetFile(cfg, 'data/holdings.json');
+      const newData = mutateFn(latest.data);
+      await ghPutFile(cfg, 'data/holdings.json', newData, latest.sha, '종목 정보 업데이트 (웹 대시보드)');
+      holdingsFile = newData;
+      statusEl.textContent = '저장 완료! 잠시 후 Actions가 시세를 갱신합니다.';
+      statusEl.className = 'status-msg ok';
+      renderAll();
+    }catch(e){
+      console.error(e);
+      statusEl.textContent = '오류: ' + e.message;
+      statusEl.className = 'status-msg err';
     }
   }
-  load();
+
+  function addHolding(){
+    if(!requireConfig()) return;
+    const market = document.getElementById('h-market').value;
+    const name = document.getElementById('h-name').value.trim();
+    const code = document.getElementById('h-code').value.trim();
+    const buy = parseFloat(document.getElementById('h-buy').value);
+    if(!name || !buy){ alert('종목명과 매입가는 필수입니다.'); return; }
+    syncAndSave(data=>{
+      data.holdings = data.holdings || [];
+      data.holdings.push({ id: uid(), market, name, code, buy_price: buy });
+      return data;
+    }, 'h-status').then(()=>{
+      document.getElementById('h-name').value='';
+      document.getElementById('h-code').value='';
+      document.getElementById('h-buy').value='';
+    });
+  }
+
+  function removeHolding(id){
+    if(!requireConfig()) return;
+    if(!confirm('이 종목을 삭제할까요?')) return;
+    syncAndSave(data=>{ data.holdings = (data.holdings||[]).filter(h=>h.id!==id); return data; }, 'h-status');
+  }
+
+  function addWatch(){
+    if(!requireConfig()) return;
+    const market = document.getElementById('w-market').value;
+    const name = document.getElementById('w-name').value.trim();
+    const code = document.getElementById('w-code').value.trim();
+    if(!name){ alert('종목명을 입력해 주세요.'); return; }
+    syncAndSave(data=>{
+      data.watchlist = data.watchlist || [];
+      data.watchlist.push({ id: uid(), market, name, code });
+      return data;
+    }, 'w-status').then(()=>{
+      document.getElementById('w-name').value='';
+      document.getElementById('w-code').value='';
+    });
+  }
+
+  function removeWatch(id){
+    if(!requireConfig()) return;
+    if(!confirm('이 종목을 삭제할까요?')) return;
+    syncAndSave(data=>{ data.watchlist = (data.watchlist||[]).filter(w=>w.id!==id); return data; }, 'w-status');
+  }
+
+  function openSettings(){
+    const guess = guessOwnerRepo();
+    document.getElementById('cfg-owner').value = cfg?.owner || guess.owner || '';
+    document.getElementById('cfg-repo').value = cfg?.repo || guess.repo || '';
+    document.getElementById('cfg-token').value = cfg?.token || '';
+    document.getElementById('cfg-status').textContent = '';
+    document.getElementById('settingsModal').classList.add('active');
+  }
+  function closeSettings(){ document.getElementById('settingsModal').classList.remove('active'); }
+
+  document.getElementById('settingsBtn').onclick = openSettings;
+  document.getElementById('settingsModal').addEventListener('click', (e)=>{ if(e.target.id==='settingsModal') closeSettings(); });
+
+  document.getElementById('cfg-save').onclick = async ()=>{
+    const owner = document.getElementById('cfg-owner').value.trim();
+    const repo = document.getElementById('cfg-repo').value.trim();
+    const token = document.getElementById('cfg-token').value.trim();
+    const statusEl = document.getElementById('cfg-status');
+    if(!owner || !repo || !token){ statusEl.textContent='모든 항목을 입력해 주세요.'; statusEl.className='status-msg err'; return; }
+    statusEl.textContent = '연결 확인 중...';
+    statusEl.className = 'status-msg';
+    const testCfg = { owner, repo, token };
+    try{
+      await ghGetFile(testCfg, 'data/holdings.json');
+      cfg = testCfg;
+      setConfig(cfg);
+      statusEl.textContent = '연결 성공!';
+      statusEl.className = 'status-msg ok';
+      setTimeout(()=>{ closeSettings(); renderAll(); }, 600);
+    }catch(e){
+      statusEl.textContent = '연결 실패: ' + e.message + ' (사용자명/저장소명/토큰 권한을 확인해 주세요)';
+      statusEl.className = 'status-msg err';
+    }
+  };
+  document.getElementById('cfg-clear').onclick = ()=>{
+    clearConfig(); cfg = null;
+    document.getElementById('cfg-owner').value='';
+    document.getElementById('cfg-repo').value='';
+    document.getElementById('cfg-token').value='';
+    document.getElementById('cfg-status').textContent='연결이 해제되었습니다.';
+    document.getElementById('cfg-status').className='status-msg ok';
+    renderAll();
+  };
+
+  document.getElementById('h-add-btn').onclick = addHolding;
+  document.getElementById('w-add-btn').onclick = addWatch;
+
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  (async function init(){
+    await loadPublicData();
+    renderAll();
+  })();
+})();
 </script>
 </body>
 </html>
