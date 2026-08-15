@@ -1,13 +1,5 @@
 {
-  "holdings": [
-    {
-      "id": "h2",
-      "market": "overseas",
-      "name": "Apple",
-      "code": "AAPL",
-      "buy_price": 180
-    }
-  ],
+  "holdings": [],
   "watchlist": [
     {
       "id": "w1",
