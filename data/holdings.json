@@ -6,6 +6,13 @@
       "name": "코덱스200",
       "code": "",
       "buy_price": 110000
+    },
+    {
+      "id": "mt6q0zsx6ljf",
+      "market": "domestic",
+      "name": "Kodex 200",
+      "code": "069500",
+      "buy_price": 112000
     }
   ],
   "watchlist": [
