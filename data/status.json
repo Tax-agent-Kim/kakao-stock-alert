@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-08-22T06:34:19.839410+09:00",
+  "updated_at": "2026-08-24T13:13:59.868378+09:00",
   "holdings": [
     {
-      "id": "msuklafmyuwn",
+      "id": "mt6q0zsx6ljf",
       "market": "domestic",
-      "name": "코덱스200",
-      "code": "",
-      "buy_price": 110000,
-      "current_price": null,
-      "change_pct": null,
-      "signal_type": "unknown",
-      "signal_label": "현재가 조회 실패"
+      "name": "Kodex 200",
+      "code": "069500",
+      "buy_price": 112000,
+      "current_price": 105885.0,
+      "change_pct": -5.46,
+      "signal_type": "hold",
+      "signal_label": "관망 (조치 없음)"
     }
   ]
 }
