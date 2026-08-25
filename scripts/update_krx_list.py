@@ -7,8 +7,10 @@ GitHub Actions가 주기적으로 이 스크립트를 실행해 목록을 최신
 
 import json
 import os
+from datetime import datetime, timedelta
 
 import pandas as pd
+from pykrx import stock as pkstock
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_PATH = os.path.join(ROOT, "data", "krx_stocks.json")
@@ -26,6 +28,30 @@ def fetch_market(market_type_param):
     return df
 
 
+def fetch_etfs():
+    """ETF는 '상장법인'이 아니라 자산운용사가 발행하는 별도 상품이라
+    일반 상장법인목록에는 없음. pykrx를 통해 KRX ETF 목록을 따로 가져온다."""
+    tickers = []
+    for delta in range(7):  # 주말/공휴일 대비 최근 영업일까지 최대 7일 역순 조회
+        date = (datetime.now() - timedelta(days=delta)).strftime("%Y%m%d")
+        try:
+            tickers = pkstock.get_etf_ticker_list(date)
+        except Exception:
+            tickers = []
+        if tickers:
+            break
+
+    etfs = []
+    for t in tickers:
+        try:
+            name = pkstock.get_etf_ticker_name(t)
+        except Exception:
+            continue
+        if name:
+            etfs.append({"name": name, "code": t, "market_label": "ETF"})
+    return etfs
+
+
 def main():
     all_stocks = []
     for param, market_label in MARKET_TYPES.items():
@@ -34,6 +60,10 @@ def main():
             code = str(row["종목코드"]).zfill(6)
             name = str(row["회사명"]).strip()
             all_stocks.append({"name": name, "code": code, "market_label": market_label})
+
+    etfs = fetch_etfs()
+    all_stocks.extend(etfs)
+    print(f"[INFO] ETF {len(etfs)}개 포함")
 
     all_stocks.sort(key=lambda x: x["name"])
 
