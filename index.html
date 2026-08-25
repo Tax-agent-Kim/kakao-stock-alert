@@ -75,6 +75,21 @@
   .status-msg{font-size:12px;margin-top:10px;min-height:16px;}
   .status-msg.err{color:var(--rust);} .status-msg.ok{color:var(--jade);}
 
+  .search-wrap{position:relative;}
+  .search-dropdown{
+    position:absolute;top:calc(100% + 4px);left:0;min-width:240px;max-width:320px;
+    background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.1);
+    z-index:20;max-height:240px;overflow-y:auto;display:none;
+  }
+  .search-dropdown.active{display:block;}
+  .search-item{padding:9px 12px;cursor:pointer;font-size:13px;border-top:1px solid var(--paper-2);}
+  .search-item:first-child{border-top:none;}
+  .search-item:hover{background:var(--paper);}
+  .search-item .si-name{font-weight:600;}
+  .search-item .si-code{font-family:'IBM Plex Mono';font-size:11px;color:var(--ink-soft);margin-left:6px;}
+  .search-item .si-extra{font-size:10.5px;color:var(--ink-soft);margin-top:1px;}
+  .search-empty{padding:10px 12px;font-size:12px;color:var(--ink-soft);}
+
   @media (max-width:640px){ .row{grid-template-columns:1fr;gap:6px;} .add-form input,.add-form .name{width:100%;} }
 </style>
 </head>
@@ -112,8 +127,11 @@
       <h2>보유종목 추가</h2>
       <div class="add-form">
         <select id="h-market"><option value="domestic">국내</option><option value="overseas">해외</option></select>
-        <input class="name" id="h-name" placeholder="종목명"/>
-        <input class="num" id="h-code" placeholder="코드/티커"/>
+        <div class="search-wrap">
+          <input class="name" id="h-name" placeholder="종목명 검색 (예: 삼성전자)" autocomplete="off"/>
+          <div class="search-dropdown" id="h-dropdown"></div>
+        </div>
+        <input class="num" id="h-code" placeholder="코드/티커 (자동입력)"/>
         <input class="num" id="h-buy" placeholder="매입가" type="number" step="any"/>
         <button class="btn" id="h-add-btn">추가</button>
       </div>
@@ -127,8 +145,11 @@
       <h2>관심종목 추가</h2>
       <div class="add-form">
         <select id="w-market"><option value="domestic">국내</option><option value="overseas">해외</option></select>
-        <input class="name" id="w-name" placeholder="종목명"/>
-        <input class="num" id="w-code" placeholder="코드/티커"/>
+        <div class="search-wrap">
+          <input class="name" id="w-name" placeholder="종목명 검색" autocomplete="off"/>
+          <div class="search-dropdown" id="w-dropdown"></div>
+        </div>
+        <input class="num" id="w-code" placeholder="코드/티커 (자동입력)"/>
         <button class="btn" id="w-add-btn">즐겨찾기 추가</button>
       </div>
       <div id="w-status" class="status-msg"></div>
@@ -219,6 +240,19 @@
   let cfg = getConfig();
   let holdingsFile = { holdings: [], watchlist: [] };
   let statusData = null;
+  let krxStocks = null; // 국내 종목 로컬 검색용 (공식 KRX 목록)
+
+  async function loadKrxStocks(){
+    if(krxStocks) return krxStocks;
+    try{
+      const data = await fetch('data/krx_stocks.json', {cache:'no-store'}).then(r=>r.json());
+      krxStocks = data.stocks || [];
+    }catch(e){
+      console.error('KRX 목록 로드 실패', e);
+      krxStocks = [];
+    }
+    return krxStocks;
+  }
 
   async function loadPublicData(){
     try{
@@ -431,6 +465,79 @@
 
   document.getElementById('h-add-btn').onclick = addHolding;
   document.getElementById('w-add-btn').onclick = addWatch;
+
+  // ---- 종목 검색 (자동완성) ----
+  function setupStockSearch(nameInputId, dropdownId, marketSelectId, codeInputId){
+    const nameInput = document.getElementById(nameInputId);
+    const dropdown = document.getElementById(dropdownId);
+    const marketSelect = document.getElementById(marketSelectId);
+    const codeInput = document.getElementById(codeInputId);
+    let debounceTimer = null;
+    let currentQuery = '';
+
+    async function runSearch(q){
+      const market = marketSelect.value;
+      try{
+        let results;
+        if(market === 'domestic'){
+          // 공식 KRX 목록에서 로컬로 검색 (외부 호출 없음, 즉시 반응)
+          const stocks = await loadKrxStocks();
+          results = stocks
+            .filter(s => s.name.includes(q))
+            .slice(0, 8)
+            .map(s => ({ name: s.name, code: s.code, extra: s.market_label }));
+        } else {
+          const res = await fetch(`/api/search-stock?q=${encodeURIComponent(q)}&market=overseas`);
+          const data = await res.json();
+          results = data.results || [];
+        }
+        if(q !== currentQuery) return; // 늦게 도착한 응답 무시
+        renderDropdown(results);
+      }catch(e){
+        console.error('검색 오류', e);
+        dropdown.innerHTML = `<div class="search-empty">검색 중 오류가 발생했습니다. 코드를 직접 입력해 주세요.</div>`;
+        dropdown.classList.add('active');
+      }
+    }
+
+    function renderDropdown(results){
+      if(results.length === 0){
+        dropdown.innerHTML = `<div class="search-empty">검색 결과가 없습니다. 코드를 직접 입력해 주세요.</div>`;
+        dropdown.classList.add('active');
+        return;
+      }
+      dropdown.innerHTML = results.map(r => `
+        <div class="search-item" data-name="${r.name.replace(/"/g,'&quot;')}" data-code="${r.code}">
+          <span class="si-name">${r.name}</span><span class="si-code">${r.code}</span>
+          ${r.extra ? `<div class="si-extra">${r.extra}</div>` : ''}
+        </div>`).join('');
+      dropdown.classList.add('active');
+      dropdown.querySelectorAll('.search-item').forEach(item=>{
+        item.addEventListener('click', ()=>{
+          nameInput.value = item.dataset.name;
+          codeInput.value = item.dataset.code;
+          dropdown.classList.remove('active');
+        });
+      });
+    }
+
+    nameInput.addEventListener('input', ()=>{
+      const q = nameInput.value.trim();
+      currentQuery = q;
+      clearTimeout(debounceTimer);
+      if(q.length < 2){ dropdown.classList.remove('active'); return; }
+      debounceTimer = setTimeout(()=>runSearch(q), 300);
+    });
+
+    document.addEventListener('click', (e)=>{
+      if(!dropdown.contains(e.target) && e.target !== nameInput){
+        dropdown.classList.remove('active');
+      }
+    });
+  }
+
+  setupStockSearch('h-name', 'h-dropdown', 'h-market', 'h-code');
+  setupStockSearch('w-name', 'w-dropdown', 'w-market', 'w-code');
 
   document.querySelectorAll('.tab-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
