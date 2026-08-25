@@ -8,5 +8,12 @@
       "buy_price": 112000
     }
   ],
-  "watchlist": []
+  "watchlist": [
+    {
+      "id": "mt7za1tjffs6",
+      "market": "domestic",
+      "name": "SK하이닉스",
+      "code": "000660"
+    }
+  ]
 }
