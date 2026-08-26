@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-26T10:33:47.914659+09:00",
+  "updated_at": "2026-08-26T16:27:33.176141+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -7,10 +7,33 @@
       "name": "Kodex 200",
       "code": "069500",
       "buy_price": 112000,
-      "current_price": 106525.0,
-      "change_pct": -4.89,
+      "current_price": 107710.0,
+      "change_pct": -3.83,
       "signal_type": "hold",
       "signal_label": "관망 (조치 없음)"
+    }
+  ],
+  "watchlist": [
+    {
+      "id": "mt7za1tjffs6",
+      "market": "domestic",
+      "name": "SK하이닉스",
+      "code": "000660",
+      "current_price": 1688000.0
+    },
+    {
+      "id": "mt7za8ry2cs7",
+      "market": "domestic",
+      "name": "삼성전자",
+      "code": "005930",
+      "current_price": 261500.0
+    },
+    {
+      "id": "mt9f6pv9quom",
+      "market": "domestic",
+      "name": "삼성전기",
+      "code": "009150",
+      "current_price": 1330000.0
     }
   ]
 }
