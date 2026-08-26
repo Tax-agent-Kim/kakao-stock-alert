@@ -166,13 +166,21 @@ def main():
             pct_str = f"{change:+.1f}%" if change is not None else "N/A"
             action_lines.append(f"- {h['name']} ({pct_str}) → {sig['label']}")
 
+    # 관심종목은 매입가가 없어 매매 신호는 계산하지 않고, 현재가만 참고용으로 조회한다.
+    watchlist = data.get("watchlist", [])
+    watch_results = []
+    for w in watchlist:
+        cur = get_current_price(w["market"], w["code"])
+        watch_results.append({**w, "current_price": cur})
+
     status = {
         "updated_at": datetime.now(KST).isoformat(),
         "holdings": results,
+        "watchlist": watch_results,
     }
     with open(STATUS_PATH, "w", encoding="utf-8") as f:
         json.dump(status, f, ensure_ascii=False, indent=2)
-    print(f"[INFO] status.json 저장 완료 ({len(results)}개 종목)")
+    print(f"[INFO] status.json 저장 완료 (보유 {len(results)}개, 관심 {len(watch_results)}개)")
 
     if action_lines:
         rest_api_key = os.environ.get("KAKAO_REST_API_KEY")
