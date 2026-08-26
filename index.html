@@ -18,8 +18,6 @@
   .masthead h1{font-family:'Source Serif 4',serif;font-weight:700;font-size:26px;margin:0;}
   .masthead .sub{font-size:12.5px;color:var(--ink-soft);margin-top:4px;}
   .updated{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);text-align:right;}
-  .gear-btn{background:none;border:1px solid var(--line);border-radius:6px;padding:5px 9px;cursor:pointer;font-size:13px;color:var(--ink-soft);margin-left:8px;}
-  .gear-btn:hover{color:var(--ink);border-color:var(--ink-soft);}
 
   .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--paper-2);padding:3px;border-radius:8px;width:fit-content;}
   .tab-btn{font-family:'IBM Plex Sans KR';font-size:13.5px;font-weight:600;padding:8px 16px;border:none;background:transparent;color:var(--ink-soft);cursor:pointer;border-radius:6px;}
@@ -35,16 +33,12 @@
   .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:20px;}
   .card h2{font-family:'Source Serif 4',serif;font-size:16px;margin:0 0 12px;}
 
-  .banner{border:1px solid var(--amber);background:var(--amber-soft);color:#6b4a0e;border-radius:8px;padding:12px 14px;font-size:12.5px;margin-bottom:18px;}
-  .banner a, .banner button.link{color:#6b4a0e;text-decoration:underline;cursor:pointer;background:none;border:none;font-size:12.5px;padding:0;font-family:inherit;}
-
   .add-form{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center;}
   .add-form input, .add-form select{font-family:'IBM Plex Sans KR';font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);}
   .add-form .name{width:130px;} .add-form .num{width:100px;font-family:'IBM Plex Mono';}
   .btn{font-family:'IBM Plex Sans KR';font-weight:600;font-size:13px;padding:8px 14px;border-radius:6px;border:none;cursor:pointer;background:var(--ink);color:var(--paper);}
   .btn:hover{background:var(--navy);} .btn:disabled{opacity:.5;cursor:not-allowed;}
   .btn.ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line);}
-  .btn.danger{background:var(--rust);}
 
   .row{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13px;}
   .row:first-of-type{border-top:none;}
@@ -66,11 +60,10 @@
 
   .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);align-items:center;justify-content:center;z-index:10;}
   .modal-bg.active{display:flex;}
-  .modal{background:#fff;border-radius:12px;padding:22px;width:min(420px,90vw);}
+  .modal{background:#fff;border-radius:12px;padding:22px;width:min(360px,90vw);}
   .modal h3{font-family:'Source Serif 4',serif;margin:0 0 6px;font-size:17px;}
   .modal p{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;line-height:1.6;}
-  .modal label{display:block;font-size:12px;font-weight:600;margin:10px 0 4px;}
-  .modal input, .modal select{width:100%;font-family:'IBM Plex Sans KR';font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;}
+  .modal input{width:100%;font-family:'IBM Plex Mono';font-size:18px;letter-spacing:.1em;text-align:center;padding:12px 10px;border:1px solid var(--line);border-radius:6px;}
   .modal .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
   .status-msg{font-size:12px;margin-top:10px;min-height:16px;}
   .status-msg.err{color:var(--rust);} .status-msg.ok{color:var(--jade);}
@@ -100,13 +93,8 @@
       <h1>리밸런싱 장부</h1>
       <div class="sub">매입가 대비 등락률 기준 자동 매매 신호 · GitHub Actions 자동 갱신</div>
     </div>
-    <div style="display:flex;align-items:center;">
-      <div class="updated" id="updatedAt">불러오는 중...</div>
-      <button class="gear-btn" id="settingsBtn" title="GitHub 연결 설정">⚙ 설정</button>
-    </div>
+    <div class="updated" id="updatedAt">불러오는 중...</div>
   </div>
-
-  <div id="connectBanner"></div>
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="dashboard">대시보드</button>
@@ -163,71 +151,25 @@
   </p>
 </div>
 
-<div class="modal-bg" id="settingsModal">
+<div class="modal-bg" id="pinModal">
   <div class="modal">
-    <h3>GitHub 연결 설정</h3>
-    <p>
-      이 홈페이지에서 종목을 추가·수정하려면 저장소에 커밋할 권한이 있는 GitHub 토큰이 필요합니다.
-      토큰은 이 브라우저에만 저장되며 다른 곳으로 전송되지 않습니다.
-    </p>
-    <label>GitHub 사용자명</label>
-    <input id="cfg-owner" placeholder="예: davidkim"/>
-    <label>저장소 이름</label>
-    <input id="cfg-repo" placeholder="예: kakao-stock-alert"/>
-    <label>Personal Access Token (fine-grained, Contents: Read/Write)</label>
-    <input id="cfg-token" type="password" placeholder="github_pat_..."/>
-    <div id="cfg-status" class="status-msg"></div>
+    <h3>PIN 입력</h3>
+    <p>종목을 추가·삭제하려면 PIN이 필요합니다. 한 번 입력하면 이 기기에서는 다시 묻지 않습니다.</p>
+    <input id="pin-input" type="password" inputmode="numeric" placeholder="••••"/>
+    <div id="pin-status" class="status-msg"></div>
     <div class="actions">
-      <button class="btn ghost" id="cfg-clear">연결 해제</button>
-      <button class="btn" id="cfg-save">저장</button>
+      <button class="btn ghost" id="pin-cancel">취소</button>
+      <button class="btn" id="pin-confirm">확인</button>
     </div>
   </div>
 </div>
 
 <script>
 (function(){
-  const LS_KEY = 'rebalance_gh_config';
+  const PIN_KEY = 'rebalance_pin';
 
-  function getConfig(){
-    try{ return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); }catch(e){ return null; }
-  }
-  function setConfig(cfg){ localStorage.setItem(LS_KEY, JSON.stringify(cfg)); }
-  function clearConfig(){ localStorage.removeItem(LS_KEY); }
-
-  function guessOwnerRepo(){
-    const host = location.hostname;
-    const parts = location.pathname.split('/').filter(Boolean);
-    if(host.endsWith('.github.io') && parts.length>0){
-      return { owner: host.split('.')[0], repo: parts[0] };
-    }
-    return { owner:'', repo:'' };
-  }
-
-  function utf8ToB64(str){ return btoa(unescape(encodeURIComponent(str))); }
-  function b64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
-
-  async function ghGetFile(cfg, path){
-    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${cfg.token}`, Accept: 'application/vnd.github+json' } });
-    if(!res.ok) throw new Error(`GitHub 조회 실패 (${res.status})`);
-    const json = await res.json();
-    return { data: JSON.parse(b64ToUtf8(json.content)), sha: json.sha };
-  }
-
-  async function ghPutFile(cfg, path, dataObj, sha, message){
-    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}`;
-    const body = { message, content: utf8ToB64(JSON.stringify(dataObj, null, 2)), sha };
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: { Authorization: `Bearer ${cfg.token}`, Accept: 'application/vnd.github+json', 'Content-Type':'application/json' },
-      body: JSON.stringify(body),
-    });
-    if(!res.ok){
-      const t = await res.text();
-      throw new Error(`GitHub 저장 실패 (${res.status}): ${t}`);
-    }
-    return res.json();
-  }
+  function getPin(){ return localStorage.getItem(PIN_KEY) || ''; }
+  function setPin(pin){ localStorage.setItem(PIN_KEY, pin); }
 
   function fmtPct(c){ if(c===null||c===undefined) return '—'; return (c>0?'+':'')+c.toFixed(1)+'%'; }
   function pctClass(c){ if(c===null||c===undefined) return 'flat'; if(c>0.001) return 'up'; if(c<-0.001) return 'down'; return 'flat'; }
@@ -237,7 +179,6 @@
   }
   function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
-  let cfg = getConfig();
   let holdingsFile = { holdings: [], watchlist: [] };
   let statusData = null;
   let krxStocks = null; // 국내 종목 로컬 검색용 (공식 KRX 목록)
@@ -263,17 +204,6 @@
       holdingsFile = h;
       statusData = s;
     }catch(e){ console.error(e); }
-  }
-
-  function renderConnectBanner(){
-    const el = document.getElementById('connectBanner');
-    if(cfg && cfg.owner && cfg.repo && cfg.token){
-      el.innerHTML = '';
-    } else {
-      el.innerHTML = `<div class="banner">종목을 추가·삭제하려면 먼저 GitHub 연결이 필요합니다.
-        <button class="link" id="bannerConnectBtn">지금 설정하기 →</button></div>`;
-      document.getElementById('bannerConnectBtn').onclick = openSettings;
-    }
   }
 
   function mergedHoldings(){
@@ -343,125 +273,103 @@
   }
 
   function renderAll(){
-    renderConnectBanner();
     renderDashboard();
     renderHoldingsManage();
     renderWatchManage();
   }
 
-  function requireConfig(){
-    if(!cfg || !cfg.owner || !cfg.repo || !cfg.token){ openSettings(); return false; }
-    return true;
-  }
-
-  async function syncAndSave(mutateFn, statusElId){
+  // ---- 서버(Vercel) API 호출: 토큰은 서버에만 있음, 브라우저는 PIN만 보냄 ----
+  async function callHoldingsApi(action, item, statusElId, pinOverride){
     const statusEl = document.getElementById(statusElId);
-    statusEl.textContent = 'GitHub에 저장 중...';
+    statusEl.textContent = '저장 중...';
     statusEl.className = 'status-msg';
     try{
-      const latest = await ghGetFile(cfg, 'data/holdings.json');
-      const newData = mutateFn(latest.data);
-      await ghPutFile(cfg, 'data/holdings.json', newData, latest.sha, '종목 정보 업데이트 (웹 대시보드)');
-      holdingsFile = newData;
+      const res = await fetch('/api/holdings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-dashboard-pin': pinOverride ?? getPin() },
+        body: JSON.stringify({ action, item }),
+      });
+      if(res.status === 401){
+        statusEl.textContent = '';
+        openPinModal(() => callHoldingsApi(action, item, statusElId));
+        return null;
+      }
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error || `요청 실패 (${res.status})`);
+      holdingsFile = data.data;
       statusEl.textContent = '저장 완료! 잠시 후 Actions가 시세를 갱신합니다.';
       statusEl.className = 'status-msg ok';
       renderAll();
+      return data;
     }catch(e){
       console.error(e);
       statusEl.textContent = '오류: ' + e.message;
       statusEl.className = 'status-msg err';
+      return null;
     }
   }
 
   function addHolding(){
-    if(!requireConfig()) return;
     const market = document.getElementById('h-market').value;
     const name = document.getElementById('h-name').value.trim();
     const code = document.getElementById('h-code').value.trim();
     const buy = parseFloat(document.getElementById('h-buy').value);
     if(!name || !buy){ alert('종목명과 매입가는 필수입니다.'); return; }
-    syncAndSave(data=>{
-      data.holdings = data.holdings || [];
-      data.holdings.push({ id: uid(), market, name, code, buy_price: buy });
-      return data;
-    }, 'h-status').then(()=>{
-      document.getElementById('h-name').value='';
-      document.getElementById('h-code').value='';
-      document.getElementById('h-buy').value='';
+    callHoldingsApi('add_holding', { id: uid(), market, name, code, buy_price: buy }, 'h-status').then((ok)=>{
+      if(ok){
+        document.getElementById('h-name').value='';
+        document.getElementById('h-code').value='';
+        document.getElementById('h-buy').value='';
+      }
     });
   }
 
   function removeHolding(id){
-    if(!requireConfig()) return;
     if(!confirm('이 종목을 삭제할까요?')) return;
-    syncAndSave(data=>{ data.holdings = (data.holdings||[]).filter(h=>h.id!==id); return data; }, 'h-status');
+    callHoldingsApi('remove_holding', { id }, 'h-status');
   }
 
   function addWatch(){
-    if(!requireConfig()) return;
     const market = document.getElementById('w-market').value;
     const name = document.getElementById('w-name').value.trim();
     const code = document.getElementById('w-code').value.trim();
     if(!name){ alert('종목명을 입력해 주세요.'); return; }
-    syncAndSave(data=>{
-      data.watchlist = data.watchlist || [];
-      data.watchlist.push({ id: uid(), market, name, code });
-      return data;
-    }, 'w-status').then(()=>{
-      document.getElementById('w-name').value='';
-      document.getElementById('w-code').value='';
+    callHoldingsApi('add_watch', { id: uid(), market, name, code }, 'w-status').then((ok)=>{
+      if(ok){
+        document.getElementById('w-name').value='';
+        document.getElementById('w-code').value='';
+      }
     });
   }
 
   function removeWatch(id){
-    if(!requireConfig()) return;
     if(!confirm('이 종목을 삭제할까요?')) return;
-    syncAndSave(data=>{ data.watchlist = (data.watchlist||[]).filter(w=>w.id!==id); return data; }, 'w-status');
+    callHoldingsApi('remove_watch', { id }, 'w-status');
   }
 
-  function openSettings(){
-    const guess = guessOwnerRepo();
-    document.getElementById('cfg-owner').value = cfg?.owner || guess.owner || '';
-    document.getElementById('cfg-repo').value = cfg?.repo || guess.repo || '';
-    document.getElementById('cfg-token').value = cfg?.token || '';
-    document.getElementById('cfg-status').textContent = '';
-    document.getElementById('settingsModal').classList.add('active');
+  // ---- PIN 모달 ----
+  let pendingRetry = null;
+  function openPinModal(retryFn){
+    pendingRetry = retryFn || null;
+    document.getElementById('pin-input').value = '';
+    document.getElementById('pin-status').textContent = '';
+    document.getElementById('pinModal').classList.add('active');
+    document.getElementById('pin-input').focus();
   }
-  function closeSettings(){ document.getElementById('settingsModal').classList.remove('active'); }
+  function closePinModal(){ document.getElementById('pinModal').classList.remove('active'); }
 
-  document.getElementById('settingsBtn').onclick = openSettings;
-  document.getElementById('settingsModal').addEventListener('click', (e)=>{ if(e.target.id==='settingsModal') closeSettings(); });
-
-  document.getElementById('cfg-save').onclick = async ()=>{
-    const owner = document.getElementById('cfg-owner').value.trim();
-    const repo = document.getElementById('cfg-repo').value.trim();
-    const token = document.getElementById('cfg-token').value.trim();
-    const statusEl = document.getElementById('cfg-status');
-    if(!owner || !repo || !token){ statusEl.textContent='모든 항목을 입력해 주세요.'; statusEl.className='status-msg err'; return; }
-    statusEl.textContent = '연결 확인 중...';
-    statusEl.className = 'status-msg';
-    const testCfg = { owner, repo, token };
-    try{
-      await ghGetFile(testCfg, 'data/holdings.json');
-      cfg = testCfg;
-      setConfig(cfg);
-      statusEl.textContent = '연결 성공!';
-      statusEl.className = 'status-msg ok';
-      setTimeout(()=>{ closeSettings(); renderAll(); }, 600);
-    }catch(e){
-      statusEl.textContent = '연결 실패: ' + e.message + ' (사용자명/저장소명/토큰 권한을 확인해 주세요)';
-      statusEl.className = 'status-msg err';
-    }
+  document.getElementById('pin-cancel').onclick = closePinModal;
+  document.getElementById('pinModal').addEventListener('click', (e)=>{ if(e.target.id==='pinModal') closePinModal(); });
+  document.getElementById('pin-confirm').onclick = ()=>{
+    const pin = document.getElementById('pin-input').value.trim();
+    if(!pin){ document.getElementById('pin-status').textContent='PIN을 입력해 주세요.'; document.getElementById('pin-status').className='status-msg err'; return; }
+    setPin(pin);
+    closePinModal();
+    if(pendingRetry) pendingRetry();
   };
-  document.getElementById('cfg-clear').onclick = ()=>{
-    clearConfig(); cfg = null;
-    document.getElementById('cfg-owner').value='';
-    document.getElementById('cfg-repo').value='';
-    document.getElementById('cfg-token').value='';
-    document.getElementById('cfg-status').textContent='연결이 해제되었습니다.';
-    document.getElementById('cfg-status').className='status-msg ok';
-    renderAll();
-  };
+  document.getElementById('pin-input').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') document.getElementById('pin-confirm').click();
+  });
 
   document.getElementById('h-add-btn').onclick = addHolding;
   document.getElementById('w-add-btn').onclick = addWatch;
@@ -480,7 +388,6 @@
       try{
         let results;
         if(market === 'domestic'){
-          // 공식 KRX 목록에서 로컬로 검색 (외부 호출 없음, 즉시 반응)
           const stocks = await loadKrxStocks();
           results = stocks
             .filter(s => s.name.includes(q))
@@ -491,7 +398,7 @@
           const data = await res.json();
           results = data.results || [];
         }
-        if(q !== currentQuery) return; // 늦게 도착한 응답 무시
+        if(q !== currentQuery) return;
         renderDropdown(results);
       }catch(e){
         console.error('검색 오류', e);
