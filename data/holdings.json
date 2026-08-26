@@ -20,6 +20,12 @@
       "market": "domestic",
       "name": "삼성전자",
       "code": "005930"
+    },
+    {
+      "id": "mt9f6pv9quom",
+      "market": "domestic",
+      "name": "삼성전기",
+      "code": "009150"
     }
   ]
 }
