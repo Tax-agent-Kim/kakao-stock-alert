@@ -42,7 +42,7 @@
 
   .row{display:grid;grid-template-columns:auto 1fr auto auto auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:13px;}
   .row:first-of-type{border-top:none;}
-  .row.watch{grid-template-columns:auto 1fr auto auto;}
+  .row.watch{grid-template-columns:auto 1fr auto auto auto;}
   .row-name{font-weight:600;} .row-ticker{color:var(--ink-soft);font-family:'IBM Plex Mono';font-size:11px;margin-left:6px;}
   .market-tag{font-size:10.5px;font-family:'IBM Plex Mono';padding:2px 6px;border-radius:4px;background:var(--paper-2);color:var(--ink-soft);width:fit-content;}
   .change-pct{font-family:'IBM Plex Mono';font-weight:600;font-size:13px;text-align:right;min-width:64px;}
@@ -212,6 +212,12 @@
     return (holdingsFile.holdings || []).map(h => ({...h, ...(statusMap[h.id]||{})}));
   }
 
+  function mergedWatchlist(){
+    const statusMap = {};
+    (statusData?.watchlist || []).forEach(w=>{ statusMap[w.id] = w; });
+    return (holdingsFile.watchlist || []).map(w => ({...w, ...(statusMap[w.id]||{})}));
+  }
+
   function renderDashboard(){
     document.getElementById('updatedAt').textContent = statusData?.updated_at
       ? '마지막 갱신: ' + new Date(statusData.updated_at).toLocaleString('ko-KR')
@@ -259,7 +265,7 @@
 
   function renderWatchManage(){
     const list = document.getElementById('watchList');
-    const wl = holdingsFile.watchlist || [];
+    const wl = mergedWatchlist();
     list.innerHTML = wl.length===0
       ? `<div class="empty-state">관심종목이 없습니다.</div>`
       : wl.map(w=>`
@@ -267,6 +273,7 @@
           <span>★</span>
           <div><span class="row-name">${w.name}</span><span class="row-ticker">${w.code||''}</span></div>
           <span class="market-tag">${w.market==='domestic'?'국내':'해외'}</span>
+          <span class="change-pct flat">${w.current_price ?? '—'}</span>
           <button class="del-btn" data-id="${w.id}" title="삭제">✕</button>
         </div>`).join('');
     list.querySelectorAll('.del-btn').forEach(btn=>{ btn.onclick = ()=>removeWatch(btn.dataset.id); });
