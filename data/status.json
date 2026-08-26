@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-26T06:38:10.891984+09:00",
+  "updated_at": "2026-08-26T10:33:47.914659+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -7,8 +7,8 @@
       "name": "Kodex 200",
       "code": "069500",
       "buy_price": 112000,
-      "current_price": 106795.0,
-      "change_pct": -4.65,
+      "current_price": 106525.0,
+      "change_pct": -4.89,
       "signal_type": "hold",
       "signal_label": "관망 (조치 없음)"
     }
