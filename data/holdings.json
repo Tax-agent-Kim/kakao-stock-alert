@@ -6,6 +6,13 @@
       "name": "Kodex 200",
       "code": "069500",
       "buy_price": 112000
+    },
+    {
+      "id": "mt9f68syux49",
+      "market": "domestic",
+      "name": "삼성전자",
+      "code": "005930",
+      "buy_price": 250000
     }
   ],
   "watchlist": [
