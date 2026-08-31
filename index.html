@@ -83,6 +83,13 @@
   .search-item .si-extra{font-size:10.5px;color:var(--ink-soft);margin-top:1px;}
   .search-empty{padding:10px 12px;font-size:12px;color:var(--ink-soft);}
 
+  .row-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end;}
+  .edit-inputs{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
+  .sparkline-cell{display:flex;align-items:center;justify-content:center;}
+  .summary-grid{display:flex;gap:28px;flex-wrap:wrap;}
+  .summary-item .label{font-size:11px;color:var(--ink-soft);margin-bottom:2px;}
+  .summary-item .value{font-family:'IBM Plex Mono';font-weight:700;font-size:15px;}
+
   @media (max-width:640px){ .row{grid-template-columns:1fr;gap:6px;} .add-form input,.add-form .name{width:100%;} }
 </style>
 </head>
@@ -106,6 +113,10 @@
   </div>
 
   <div class="panel active" id="panel-dashboard">
+    <div class="card" id="portfolioSummaryCard" style="display:none;">
+      <h2>포트폴리오 요약</h2>
+      <div id="portfolioSummary"></div>
+    </div>
     <div id="alertBox"></div>
     <div class="card">
       <h2>보유종목 현황</h2>
@@ -128,6 +139,7 @@
         </div>
         <input class="num" id="h-code" placeholder="코드/티커 (자동입력)"/>
         <input class="num" id="h-buy" placeholder="매입가" type="number" step="any"/>
+        <input class="num" id="h-qty" placeholder="수량(선택)" type="number" step="any" style="width:90px;"/>
         <button class="btn" id="h-add-btn">추가</button>
       </div>
       <div id="h-status" class="status-msg"></div>
@@ -154,7 +166,7 @@
 
   <p class="note">
     여기서 추가·삭제한 내용은 저장소의 <code>data/holdings.json</code>에 자동으로 커밋됩니다.
-    커밋되면 GitHub Actions가 곧바로 시세를 다시 계산합니다 (보통 1~2분 소요).
+    커밋되면 GitHub Actions가 곧바로 시세를 다시 계산합니다 (보통 1~2분 소요). 수량을 입력하면 평가금액·손익도 함께 계산됩니다.
   </p>
 </div>
 
@@ -187,9 +199,29 @@
   }
   function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 
+  function sparklineSVG(points){
+    if(!points || points.length < 2){
+      return `<span style="font-size:10.5px;color:var(--ink-soft);white-space:nowrap;">데이터<br>쌓는 중</span>`;
+    }
+    const prices = points.map(p=>p.price);
+    const min = Math.min(...prices), max = Math.max(...prices);
+    const w = 64, h = 24;
+    const range = (max - min) || 1;
+    const stepX = w / (prices.length - 1);
+    const coords = prices.map((p,i)=>{
+      const x = i * stepX;
+      const y = h - ((p - min) / range) * h;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    const color = prices[prices.length-1] >= prices[0] ? '#1F6F5C' : '#A63A2E';
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${coords}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+  }
+
   let holdingsFile = { holdings: [], watchlist: [] };
   let statusData = null;
   let krxStocks = null; // 국내 종목 로컬 검색용 (공식 KRX 목록)
+  let priceHistory = {}; // 종목별 가격 히스토리 (미니 그래프용)
+  let editingHoldingId = null;
 
   async function loadKrxStocks(){
     if(krxStocks) return krxStocks;
@@ -205,12 +237,14 @@
 
   async function loadPublicData(){
     try{
-      const [h, s] = await Promise.all([
+      const [h, s, hist] = await Promise.all([
         fetch('data/holdings.json', {cache:'no-store'}).then(r=>r.json()),
         fetch('data/status.json', {cache:'no-store'}).then(r=>r.json()).catch(()=>null),
+        fetch('data/price_history.json', {cache:'no-store'}).then(r=>r.json()).catch(()=>({})),
       ]);
       holdingsFile = h;
       statusData = s;
+      priceHistory = hist || {};
     }catch(e){ console.error(e); }
   }
 
@@ -224,6 +258,22 @@
     const statusMap = {};
     (statusData?.watchlist || []).forEach(w=>{ statusMap[w.id] = w; });
     return (holdingsFile.watchlist || []).map(w => ({...w, ...(statusMap[w.id]||{})}));
+  }
+
+  function renderPortfolioSummary(){
+    const card = document.getElementById('portfolioSummaryCard');
+    const ps = statusData?.portfolio_summary;
+    if(!ps){ card.style.display='none'; return; }
+    card.style.display='block';
+    const profitColor = ps.total_profit_amount >= 0 ? 'var(--jade)' : 'var(--rust)';
+    document.getElementById('portfolioSummary').innerHTML = `
+      <div class="summary-grid">
+        <div class="summary-item"><div class="label">총 매입금액</div><div class="value">${fmtNum(ps.total_buy_amount)}</div></div>
+        <div class="summary-item"><div class="label">총 평가금액</div><div class="value">${fmtNum(ps.total_eval_amount)}</div></div>
+        <div class="summary-item"><div class="label">총 손익</div><div class="value" style="color:${profitColor};">${ps.total_profit_amount>=0?'+':''}${fmtNum(ps.total_profit_amount)} (${ps.total_profit_pct>=0?'+':''}${ps.total_profit_pct.toFixed(1)}%)</div></div>
+      </div>
+      <div style="font-size:11px;color:var(--ink-soft);margin-top:8px;">수량을 입력한 종목만 집계됩니다.</div>
+    `;
   }
 
   function renderDashboard(){
@@ -245,10 +295,14 @@
     list.innerHTML = merged.length===0
       ? `<div class="empty-state">보유종목 관리 탭에서 종목을 추가해 주세요.</div>`
       : merged.map(h=>`
-        <div class="row" style="grid-template-columns:auto 1fr auto auto;">
+        <div class="row" style="grid-template-columns:auto 1fr 70px auto auto;">
           <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
-          <div><span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
-            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${fmtNum(h.buy_price)} · 현재가 ${fmtNum(h.current_price)}</div></div>
+          <div>
+            <span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
+            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${fmtNum(h.buy_price)} · 현재가 ${fmtNum(h.current_price)}${h.quantity?` · 수량 ${fmtNum(h.quantity)}`:''}</div>
+            ${h.eval_amount!=null ? `<div style="font-size:11px;margin-top:2px;">평가 ${fmtNum(h.eval_amount)} · 손익 <b style="color:${h.profit_amount>=0?'var(--jade)':'var(--rust)'};">${h.profit_amount>=0?'+':''}${fmtNum(h.profit_amount)}</b></div>` : ''}
+          </div>
+          <div class="sparkline-cell">${sparklineSVG(priceHistory[h.id])}</div>
           <span class="change-pct ${pctClass(h.change_pct)}">${fmtPct(h.change_pct)}</span>
           ${signalHTML(h.signal_type||'unknown', h.signal_label||'대기중')}
         </div>`).join('');
@@ -259,16 +313,59 @@
     const merged = mergedHoldings();
     list.innerHTML = merged.length===0
       ? `<div class="empty-state">아직 보유종목이 없습니다.</div>`
-      : merged.map(h=>`
-        <div class="row">
-          <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
-          <div><span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
-            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${fmtNum(h.buy_price)}</div></div>
-          <span class="change-pct ${pctClass(h.change_pct)}">${fmtPct(h.change_pct)}</span>
-          ${signalHTML(h.signal_type||'unknown', h.signal_label||'대기중')}
-          <button class="del-btn" data-id="${h.id}" title="삭제">✕</button>
-        </div>`).join('');
+      : merged.map(h=>{
+          if(editingHoldingId === h.id){
+            return `
+            <div class="row" style="grid-template-columns:auto 1fr auto auto;">
+              <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
+              <div>
+                <span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
+                <div class="edit-inputs">
+                  <input class="num" id="edit-buy-${h.id}" type="number" step="any" value="${h.buy_price}" placeholder="매입가" style="width:100px;"/>
+                  <input class="num" id="edit-qty-${h.id}" type="number" step="any" value="${h.quantity ?? ''}" placeholder="수량(선택)" style="width:100px;"/>
+                </div>
+              </div>
+              <button class="btn" data-save="${h.id}">저장</button>
+              <button class="btn ghost" data-cancel="${h.id}">취소</button>
+            </div>`;
+          }
+          return `
+          <div class="row" style="grid-template-columns:auto 1fr 70px auto auto auto;">
+            <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
+            <div>
+              <span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
+              <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${fmtNum(h.buy_price)}${h.quantity?` · 수량 ${fmtNum(h.quantity)}`:''}</div>
+              ${h.eval_amount!=null ? `<div style="font-size:11px;margin-top:2px;">평가 ${fmtNum(h.eval_amount)} · 손익 <b style="color:${h.profit_amount>=0?'var(--jade)':'var(--rust)'};">${h.profit_amount>=0?'+':''}${fmtNum(h.profit_amount)}</b></div>` : ''}
+            </div>
+            <div class="sparkline-cell">${sparklineSVG(priceHistory[h.id])}</div>
+            <span class="change-pct ${pctClass(h.change_pct)}">${fmtPct(h.change_pct)}</span>
+            ${signalHTML(h.signal_type||'unknown', h.signal_label||'대기중')}
+            <div class="row-actions">
+              <button class="btn ghost" data-edit="${h.id}" title="수정" style="padding:5px 8px;">✎</button>
+              <button class="del-btn" data-id="${h.id}" title="삭제">✕</button>
+            </div>
+          </div>`;
+        }).join('');
+
     list.querySelectorAll('.del-btn').forEach(btn=>{ btn.onclick = ()=>removeHolding(btn.dataset.id); });
+    list.querySelectorAll('[data-edit]').forEach(btn=>{
+      btn.onclick = ()=>{ editingHoldingId = btn.dataset.edit; renderHoldingsManage(); };
+    });
+    list.querySelectorAll('[data-cancel]').forEach(btn=>{
+      btn.onclick = ()=>{ editingHoldingId = null; renderHoldingsManage(); };
+    });
+    list.querySelectorAll('[data-save]').forEach(btn=>{
+      btn.onclick = ()=>{
+        const id = btn.dataset.save;
+        const buy = parseFloat(document.getElementById(`edit-buy-${id}`).value);
+        const qtyRaw = document.getElementById(`edit-qty-${id}`).value;
+        if(!buy){ alert('매입가를 입력해 주세요.'); return; }
+        const item = { id, buy_price: buy, quantity: qtyRaw ? parseFloat(qtyRaw) : null };
+        callHoldingsApi('edit_holding', item, 'h-status').then((ok)=>{
+          if(ok){ editingHoldingId = null; renderHoldingsManage(); }
+        });
+      };
+    });
   }
 
   function renderWatchManage(){
@@ -301,6 +398,7 @@
   }
 
   function renderAll(){
+    renderPortfolioSummary();
     renderDashboard();
     renderDashboardWatch();
     renderHoldingsManage();
@@ -343,12 +441,17 @@
     const name = document.getElementById('h-name').value.trim();
     const code = document.getElementById('h-code').value.trim();
     const buy = parseFloat(document.getElementById('h-buy').value);
+    const qtyRaw = document.getElementById('h-qty').value;
+    const qty = qtyRaw ? parseFloat(qtyRaw) : null;
     if(!name || !buy){ alert('종목명과 매입가는 필수입니다.'); return; }
-    callHoldingsApi('add_holding', { id: uid(), market, name, code, buy_price: buy }, 'h-status').then((ok)=>{
+    const item = { id: uid(), market, name, code, buy_price: buy };
+    if(qty) item.quantity = qty;
+    callHoldingsApi('add_holding', item, 'h-status').then((ok)=>{
       if(ok){
         document.getElementById('h-name').value='';
         document.getElementById('h-code').value='';
         document.getElementById('h-buy').value='';
+        document.getElementById('h-qty').value='';
       }
     });
   }
