@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-31T15:20:49.137231+09:00",
+  "updated_at": "2026-08-31T15:22:14.626574+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -45,6 +45,20 @@
       "name": "한화에어로스페이스",
       "code": "012450",
       "current_price": 1100000.0
+    },
+    {
+      "id": "mtguoexqb807",
+      "market": "overseas",
+      "name": "YieldMax TSLA Option Income Str",
+      "code": "TSLY",
+      "current_price": 21.84000015258789
+    },
+    {
+      "id": "mtguou7ud536",
+      "market": "overseas",
+      "name": "Tesla, Inc.",
+      "code": "TSLA",
+      "current_price": 348.75
     }
   ],
   "portfolio_summary": {
