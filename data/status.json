@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-08-31T11:42:02.001392+09:00",
+  "updated_at": "2026-08-31T11:42:34.704695+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -7,8 +7,8 @@
       "name": "Kodex 200",
       "code": "069500",
       "buy_price": 112000,
-      "current_price": 104615.0,
-      "change_pct": -6.59,
+      "current_price": 104625.0,
+      "change_pct": -6.58,
       "signal_type": "hold",
       "signal_label": "관망 (조치 없음)"
     }
@@ -19,7 +19,7 @@
       "market": "domestic",
       "name": "SK하이닉스",
       "code": "000660",
-      "current_price": 1608000.0
+      "current_price": 1607000.0
     },
     {
       "id": "mt7za8ry2cs7",
