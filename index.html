@@ -95,6 +95,9 @@
     </div>
     <div class="updated" id="updatedAt">불러오는 중...</div>
   </div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+    <button class="btn ghost" id="refreshNowBtn">🔄 지금 시세 조회</button>
+  </div>
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="dashboard">대시보드</button>
@@ -107,6 +110,10 @@
     <div class="card">
       <h2>보유종목 현황</h2>
       <div id="dashList"></div>
+    </div>
+    <div class="card">
+      <h2>관심종목 현황</h2>
+      <div id="dashWatchList"></div>
     </div>
   </div>
 
@@ -279,8 +286,22 @@
     list.querySelectorAll('.del-btn').forEach(btn=>{ btn.onclick = ()=>removeWatch(btn.dataset.id); });
   }
 
+  function renderDashboardWatch(){
+    const wl = mergedWatchlist();
+    const list = document.getElementById('dashWatchList');
+    list.innerHTML = wl.length===0
+      ? `<div class="empty-state">관심종목 관리 탭에서 종목을 추가해 주세요.</div>`
+      : wl.map(w=>`
+        <div class="row" style="grid-template-columns:auto 1fr auto;">
+          <span class="market-tag">${w.market==='domestic'?'국내':'해외'}</span>
+          <div><span class="row-name">${w.name}</span><span class="row-ticker">${w.code||''}</span></div>
+          <span class="change-pct flat">${w.current_price ?? '—'}</span>
+        </div>`).join('');
+  }
+
   function renderAll(){
     renderDashboard();
+    renderDashboardWatch();
     renderHoldingsManage();
     renderWatchManage();
   }
@@ -380,6 +401,36 @@
 
   document.getElementById('h-add-btn').onclick = addHolding;
   document.getElementById('w-add-btn').onclick = addWatch;
+
+  // ---- 수동 시세 조회 버튼 ----
+  async function triggerRefresh(pinOverride){
+    const btn = document.getElementById('refreshNowBtn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '요청 중...';
+    try{
+      const res = await fetch('/api/trigger-refresh', {
+        method: 'POST',
+        headers: { 'x-dashboard-pin': pinOverride ?? getPin() },
+      });
+      if(res.status === 401){
+        btn.disabled = false;
+        btn.textContent = originalText;
+        openPinModal(() => triggerRefresh());
+        return;
+      }
+      const data = await res.json();
+      if(!res.ok) throw new Error(data.error || `요청 실패 (${res.status})`);
+      btn.textContent = '요청 완료! (1~2분 후 갱신)';
+      setTimeout(()=>{ btn.textContent = originalText; btn.disabled = false; }, 5000);
+    }catch(e){
+      console.error(e);
+      alert('시세 조회 요청 중 오류가 발생했습니다: ' + e.message);
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
+  }
+  document.getElementById('refreshNowBtn').onclick = () => triggerRefresh();
 
   // ---- 종목 검색 (자동완성) ----
   function setupStockSearch(nameInputId, dropdownId, marketSelectId, codeInputId){
