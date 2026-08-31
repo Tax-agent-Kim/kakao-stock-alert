@@ -33,6 +33,12 @@
       "market": "domestic",
       "name": "한화에어로스페이스",
       "code": "012450"
+    },
+    {
+      "id": "mtguoexqb807",
+      "market": "overseas",
+      "name": "YieldMax TSLA Option Income Str",
+      "code": "TSLY"
     }
   ]
 }
