@@ -59,6 +59,11 @@ function applyAction(data, action, item) {
   data.watchlist = data.watchlist || [];
   if (action === 'add_holding') data.holdings.push(item);
   else if (action === 'remove_holding') data.holdings = data.holdings.filter(h => h.id !== item.id);
+  else if (action === 'edit_holding') {
+    const idx = data.holdings.findIndex(h => h.id === item.id);
+    if (idx === -1) throw new Error('수정할 종목을 찾을 수 없습니다.');
+    data.holdings[idx] = { ...data.holdings[idx], ...item };
+  }
   else if (action === 'add_watch') data.watchlist.push(item);
   else if (action === 'remove_watch') data.watchlist = data.watchlist.filter(w => w.id !== item.id);
   else throw new Error(`알 수 없는 action: ${action}`);
