@@ -39,6 +39,12 @@
       "market": "overseas",
       "name": "YieldMax TSLA Option Income Str",
       "code": "TSLY"
+    },
+    {
+      "id": "mtguou7ud536",
+      "market": "overseas",
+      "name": "Tesla, Inc.",
+      "code": "TSLA"
     }
   ]
 }
