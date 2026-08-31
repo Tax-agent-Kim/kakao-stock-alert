@@ -25,6 +25,8 @@ KST = timezone(timedelta(hours=9))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOLDINGS_PATH = os.path.join(ROOT, "data", "holdings.json")
 STATUS_PATH = os.path.join(ROOT, "data", "status.json")
+HISTORY_PATH = os.path.join(ROOT, "data", "price_history.json")
+HISTORY_MAX_POINTS = 120  # 종목당 최대 보관 일수 (약 4~5개월치)
 
 
 # ---------- 1. 매매 원칙 ----------
@@ -91,6 +93,29 @@ def get_current_price(market, code):
     return get_overseas_price(code)
 
 
+# ---------- 2-1. 가격 히스토리 (그래프용) ----------
+def load_history():
+    if not os.path.exists(HISTORY_PATH):
+        return {}
+    try:
+        with open(HISTORY_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def record_history(history, holding_id, price):
+    """오늘 날짜로 가격 1개를 기록한다. 같은 날 여러 번 실행돼도 그날 값은 최신으로 덮어쓴다."""
+    if price is None:
+        return
+    today = datetime.now(KST).strftime("%Y-%m-%d")
+    points = history.setdefault(holding_id, [])
+    points = [p for p in points if p.get("date") != today]
+    points.append({"date": today, "price": round(price, 2)})
+    points.sort(key=lambda p: p["date"])
+    history[holding_id] = points[-HISTORY_MAX_POINTS:]
+
+
 # ---------- 3. 카카오톡 나에게 보내기 ----------
 KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token"
 KAKAO_SEND_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
@@ -142,6 +167,8 @@ def main():
     with open(HOLDINGS_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
 
+    history = load_history()
+
     holdings = data.get("holdings", [])
     results = []
     action_lines = []
@@ -149,22 +176,50 @@ def main():
     for h in holdings:
         cur = get_current_price(h["market"], h["code"])
         buy = h["buy_price"]
+        qty = h.get("quantity")  # 수량은 선택 입력 항목 (없으면 금액 계산은 건너뜀)
         change = None
         if cur is not None and buy:
             change = (cur - buy) / buy * 100
         sig = get_signal(change)
-        results.append(
-            {
-                **h,
-                "current_price": cur,
-                "change_pct": round(change, 2) if change is not None else None,
-                "signal_type": sig["type"],
-                "signal_label": sig["label"],
-            }
-        )
+
+        entry = {
+            **h,
+            "current_price": cur,
+            "change_pct": round(change, 2) if change is not None else None,
+            "signal_type": sig["type"],
+            "signal_label": sig["label"],
+        }
+
+        if qty:
+            buy_amount = buy * qty
+            eval_amount = cur * qty if cur is not None else None
+            profit_amount = (eval_amount - buy_amount) if eval_amount is not None else None
+            entry.update(
+                {
+                    "buy_amount": round(buy_amount, 2),
+                    "eval_amount": round(eval_amount, 2) if eval_amount is not None else None,
+                    "profit_amount": round(profit_amount, 2) if profit_amount is not None else None,
+                }
+            )
+
+        results.append(entry)
+        record_history(history, h["id"], cur)
+
         if sig["type"] in ("buy", "sell", "sellall"):
             pct_str = f"{change:+.1f}%" if change is not None else "N/A"
             action_lines.append(f"- {h['name']} ({pct_str}) → {sig['label']}")
+
+    # 포트폴리오 전체 합계 (수량이 입력된 종목만 집계)
+    total_buy = sum(r["buy_amount"] for r in results if r.get("buy_amount") is not None)
+    total_eval = sum(r["eval_amount"] for r in results if r.get("eval_amount") is not None)
+    portfolio_summary = None
+    if total_buy > 0:
+        portfolio_summary = {
+            "total_buy_amount": round(total_buy, 2),
+            "total_eval_amount": round(total_eval, 2),
+            "total_profit_amount": round(total_eval - total_buy, 2),
+            "total_profit_pct": round((total_eval - total_buy) / total_buy * 100, 2),
+        }
 
     # 관심종목은 매입가가 없어 매매 신호는 계산하지 않고, 현재가만 참고용으로 조회한다.
     watchlist = data.get("watchlist", [])
@@ -172,15 +227,21 @@ def main():
     for w in watchlist:
         cur = get_current_price(w["market"], w["code"])
         watch_results.append({**w, "current_price": cur})
+        record_history(history, w["id"], cur)
 
     status = {
         "updated_at": datetime.now(KST).isoformat(),
         "holdings": results,
         "watchlist": watch_results,
+        "portfolio_summary": portfolio_summary,
     }
     with open(STATUS_PATH, "w", encoding="utf-8") as f:
         json.dump(status, f, ensure_ascii=False, indent=2)
     print(f"[INFO] status.json 저장 완료 (보유 {len(results)}개, 관심 {len(watch_results)}개)")
+
+    with open(HISTORY_PATH, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
+    print(f"[INFO] price_history.json 저장 완료 ({len(history)}개 종목)")
 
     if action_lines:
         rest_api_key = os.environ.get("KAKAO_REST_API_KEY")
