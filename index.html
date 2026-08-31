@@ -179,6 +179,7 @@
   function setPin(pin){ localStorage.setItem(PIN_KEY, pin); }
 
   function fmtPct(c){ if(c===null||c===undefined) return '—'; return (c>0?'+':'')+c.toFixed(1)+'%'; }
+  function fmtNum(n){ if(n===null||n===undefined||n==='') return '—'; const num = Number(n); if(isNaN(num)) return n; return num.toLocaleString('ko-KR'); }
   function pctClass(c){ if(c===null||c===undefined) return 'flat'; if(c>0.001) return 'up'; if(c<-0.001) return 'down'; return 'flat'; }
   function signalHTML(type, label){
     const cls = type==='buy'?'buy':type==='sell'?'sell':type==='sellall'?'sellall':type==='unknown'?'unknown':'hold';
@@ -247,7 +248,7 @@
         <div class="row" style="grid-template-columns:auto 1fr auto auto;">
           <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
           <div><span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
-            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${h.buy_price} · 현재가 ${h.current_price ?? '—'}</div></div>
+            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${fmtNum(h.buy_price)} · 현재가 ${fmtNum(h.current_price)}</div></div>
           <span class="change-pct ${pctClass(h.change_pct)}">${fmtPct(h.change_pct)}</span>
           ${signalHTML(h.signal_type||'unknown', h.signal_label||'대기중')}
         </div>`).join('');
@@ -262,7 +263,7 @@
         <div class="row">
           <span class="market-tag">${h.market==='domestic'?'국내':'해외'}</span>
           <div><span class="row-name">${h.name}</span><span class="row-ticker">${h.code||''}</span>
-            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${h.buy_price}</div></div>
+            <div style="font-size:11px;color:var(--ink-soft);margin-top:2px;">매입가 ${fmtNum(h.buy_price)}</div></div>
           <span class="change-pct ${pctClass(h.change_pct)}">${fmtPct(h.change_pct)}</span>
           ${signalHTML(h.signal_type||'unknown', h.signal_label||'대기중')}
           <button class="del-btn" data-id="${h.id}" title="삭제">✕</button>
@@ -280,7 +281,7 @@
           <span>★</span>
           <div><span class="row-name">${w.name}</span><span class="row-ticker">${w.code||''}</span></div>
           <span class="market-tag">${w.market==='domestic'?'국내':'해외'}</span>
-          <span class="change-pct flat">${w.current_price ?? '—'}</span>
+          <span class="change-pct flat">${fmtNum(w.current_price)}</span>
           <button class="del-btn" data-id="${w.id}" title="삭제">✕</button>
         </div>`).join('');
     list.querySelectorAll('.del-btn').forEach(btn=>{ btn.onclick = ()=>removeWatch(btn.dataset.id); });
@@ -295,7 +296,7 @@
         <div class="row" style="grid-template-columns:auto 1fr auto;">
           <span class="market-tag">${w.market==='domestic'?'국내':'해외'}</span>
           <div><span class="row-name">${w.name}</span><span class="row-ticker">${w.code||''}</span></div>
-          <span class="change-pct flat">${w.current_price ?? '—'}</span>
+          <span class="change-pct flat">${fmtNum(w.current_price)}</span>
         </div>`).join('');
   }
 
