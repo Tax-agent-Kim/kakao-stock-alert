@@ -5,7 +5,8 @@
       "market": "domestic",
       "name": "Kodex 200",
       "code": "069500",
-      "buy_price": 112000
+      "buy_price": 112000,
+      "quantity": 1
     }
   ],
   "watchlist": [
