@@ -27,6 +27,12 @@
       "market": "domestic",
       "name": "삼성전기",
       "code": "009150"
+    },
+    {
+      "id": "mtgun0a9nxpi",
+      "market": "domestic",
+      "name": "한화에어로스페이스",
+      "code": "012450"
     }
   ]
 }
