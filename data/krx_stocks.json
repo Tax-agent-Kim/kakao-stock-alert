@@ -946,6 +946,11 @@
       "market_label": "KOSDAQ"
     },
     {
+      "name": "MDS스피어",
+      "code": "009810",
+      "market_label": "KOSPI"
+    },
+    {
       "name": "MDS테크",
       "code": "086960",
       "market_label": "KOSDAQ"
@@ -2581,11 +2586,6 @@
       "market_label": "KOSPI"
     },
     {
-      "name": "대신밸런스제17호스팩",
-      "code": "471050",
-      "market_label": "KOSDAQ"
-    },
-    {
       "name": "대신밸런스제19호스팩",
       "code": "482690",
       "market_label": "KOSDAQ"
@@ -3078,11 +3078,6 @@
     {
       "name": "동양고속",
       "code": "084670",
-      "market_label": "KOSPI"
-    },
-    {
-      "name": "동양생명",
-      "code": "082640",
       "market_label": "KOSPI"
     },
     {
@@ -5559,11 +5554,6 @@
       "name": "세경하이테크",
       "code": "148150",
       "market_label": "KOSDAQ"
-    },
-    {
-      "name": "세기상사",
-      "code": "002420",
-      "market_label": "KOSPI"
     },
     {
       "name": "세나테크놀로지",
@@ -8499,6 +8489,11 @@
       "name": "우양에이치씨",
       "code": "101970",
       "market_label": "KOSDAQ"
+    },
+    {
+      "name": "우양피앤엘",
+      "code": "002420",
+      "market_label": "KOSPI"
     },
     {
       "name": "우원개발",
@@ -12026,11 +12021,6 @@
       "market_label": "KOSDAQ"
     },
     {
-      "name": "플레이그램",
-      "code": "009810",
-      "market_label": "KOSPI"
-    },
-    {
       "name": "플레이디",
       "code": "237820",
       "market_label": "KOSDAQ"
@@ -13451,5 +13441,5 @@
       "market_label": "KOSDAQ"
     }
   ],
-  "count": 2690
+  "count": 2688
 }
