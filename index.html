@@ -90,7 +90,19 @@
   .summary-item .label{font-size:11px;color:var(--ink-soft);margin-bottom:2px;}
   .summary-item .value{font-family:'IBM Plex Mono';font-weight:700;font-size:15px;}
 
-  @media (max-width:640px){ .row{grid-template-columns:1fr;gap:6px;} .add-form input,.add-form .name{width:100%;} }
+  @media (max-width:640px){
+    .row{grid-template-columns:1fr !important; gap:8px;}
+    .row > *{min-width:0;}
+    .add-form input,.add-form .name{width:100%;}
+    .sparkline-cell{justify-content:flex-start;padding:2px 0;}
+    .row-actions{justify-content:flex-start;}
+    .change-pct{text-align:left;}
+    .signal{white-space:normal;display:inline-block;width:fit-content;}
+    .alert-row{flex-wrap:wrap;gap:6px;}
+    .updated{text-align:left;margin-top:6px;}
+    .masthead{flex-wrap:wrap;}
+  }
+  body{overflow-x:hidden;}
 </style>
 </head>
 <body>
