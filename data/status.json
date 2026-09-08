@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-08T20:39:03.501835+09:00",
+  "updated_at": "2026-09-09T08:20:20.203400+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -51,14 +51,14 @@
       "market": "overseas",
       "name": "YieldMax TSLA Option Income Str",
       "code": "TSLY",
-      "current_price": 22.09000015258789
+      "current_price": 22.790000915527344
     },
     {
       "id": "mtguou7ud536",
       "market": "overseas",
       "name": "Tesla, Inc.",
       "code": "TSLA",
-      "current_price": 354.0799865722656
+      "current_price": 368.1600036621094
     }
   ],
   "portfolio_summary": {
