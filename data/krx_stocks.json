@@ -546,6 +546,11 @@
       "market_label": "KOSPI"
     },
     {
+      "name": "HT로보틱스",
+      "code": "396300",
+      "market_label": "KOSDAQ"
+    },
+    {
       "name": "IBKS제24호스팩",
       "code": "469480",
       "market_label": "KOSDAQ"
@@ -2001,13 +2006,13 @@
       "market_label": "KOSDAQ"
     },
     {
-      "name": "나무가",
-      "code": "190510",
+      "name": "나무AX",
+      "code": "242040",
       "market_label": "KOSDAQ"
     },
     {
-      "name": "나무에이엑스",
-      "code": "242040",
+      "name": "나무가",
+      "code": "190510",
       "market_label": "KOSDAQ"
     },
     {
@@ -5606,11 +5611,6 @@
       "market_label": "KOSDAQ"
     },
     {
-      "name": "세아메카닉스",
-      "code": "396300",
-      "market_label": "KOSDAQ"
-    },
-    {
       "name": "세아베스틸지주",
       "code": "001430",
       "market_label": "KOSPI"
@@ -5893,6 +5893,11 @@
     {
       "name": "스모트로닉",
       "code": "066590",
+      "market_label": "KOSDAQ"
+    },
+    {
+      "name": "스카이랩스",
+      "code": "386380",
       "market_label": "KOSDAQ"
     },
     {
@@ -6943,11 +6948,6 @@
     {
       "name": "알에스오토메이션",
       "code": "140670",
-      "market_label": "KOSDAQ"
-    },
-    {
-      "name": "알에프세미",
-      "code": "096610",
       "market_label": "KOSDAQ"
     },
     {
