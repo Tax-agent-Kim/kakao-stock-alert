@@ -229,6 +229,15 @@
     return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${coords}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
   }
 
+  function krxRankScore(stock, q){
+    if(stock.code === q) return 0;
+    if(stock.code.startsWith(q)) return 1;
+    if(stock.name === q) return 2;
+    if(stock.name.startsWith(q)) return 3;
+    if(stock.name.includes(q)) return 4;
+    return 5; // code.includes(q) 인 경우
+  }
+
   let holdingsFile = { holdings: [], watchlist: [] };
   let statusData = null;
   let krxStocks = null; // 국내 종목 로컬 검색용 (공식 KRX 목록)
@@ -563,8 +572,9 @@
         let results;
         if(market === 'domestic'){
           const stocks = await loadKrxStocks();
-          results = stocks
-            .filter(s => s.name.includes(q))
+          const matched = stocks.filter(s => s.name.includes(q) || s.code.includes(q));
+          matched.sort((a,b) => krxRankScore(a,q) - krxRankScore(b,q));
+          results = matched
             .slice(0, 8)
             .map(s => ({ name: s.name, code: s.code, extra: s.market_label }));
         } else {
