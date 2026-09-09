@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-09T20:45:19.854758+09:00",
+  "updated_at": "2026-09-10T08:09:40.718068+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -58,7 +58,7 @@
       "market": "overseas",
       "name": "Tesla, Inc.",
       "code": "TSLA",
-      "current_price": 368.1600036621094
+      "current_price": 367.80999755859375
     }
   ],
   "portfolio_summary": {
