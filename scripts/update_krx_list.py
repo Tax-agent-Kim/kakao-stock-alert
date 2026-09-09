@@ -7,6 +7,7 @@ GitHub Actions가 주기적으로 이 스크립트를 실행해 목록을 최신
 
 import json
 import os
+import sys
 from datetime import datetime, timedelta
 
 import pandas as pd
