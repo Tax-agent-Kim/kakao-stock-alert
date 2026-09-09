@@ -229,12 +229,13 @@
     return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${coords}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
   }
 
-  function krxRankScore(stock, q){
+  function krxRankScore(stock, q, qNorm){
+    const nameLower = stock.name.toLowerCase();
     if(stock.code === q) return 0;
     if(stock.code.startsWith(q)) return 1;
-    if(stock.name === q) return 2;
-    if(stock.name.startsWith(q)) return 3;
-    if(stock.name.includes(q)) return 4;
+    if(nameLower === qNorm) return 2;
+    if(nameLower.startsWith(qNorm)) return 3;
+    if(nameLower.includes(qNorm)) return 4;
     return 5; // code.includes(q) 인 경우
   }
 
@@ -572,8 +573,9 @@
         let results;
         if(market === 'domestic'){
           const stocks = await loadKrxStocks();
-          const matched = stocks.filter(s => s.name.includes(q) || s.code.includes(q));
-          matched.sort((a,b) => krxRankScore(a,q) - krxRankScore(b,q));
+          const qNorm = q.toLowerCase();
+          const matched = stocks.filter(s => s.name.toLowerCase().includes(qNorm) || s.code.includes(q));
+          matched.sort((a,b) => krxRankScore(a,q,qNorm) - krxRankScore(b,q,qNorm));
           results = matched
             .slice(0, 8)
             .map(s => ({ name: s.name, code: s.code, extra: s.market_label }));
