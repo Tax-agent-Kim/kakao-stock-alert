@@ -7,6 +7,14 @@
       "code": "069500",
       "buy_price": 112000,
       "quantity": 1
+    },
+    {
+      "id": "mttkkl0jqrpt",
+      "market": "domestic",
+      "name": "Kodex200",
+      "code": "498400",
+      "buy_price": 100000,
+      "quantity": 1
     }
   ],
   "watchlist": [
