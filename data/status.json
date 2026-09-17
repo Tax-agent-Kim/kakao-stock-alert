@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-17T20:59:32.094279+09:00",
+  "updated_at": "2026-09-18T08:31:04.928258+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -23,42 +23,42 @@
       "market": "domestic",
       "name": "SK하이닉스",
       "code": "000660",
-      "current_price": 1766000.0
+      "current_price": 1745000.0
     },
     {
       "id": "mt7za8ry2cs7",
       "market": "domestic",
       "name": "삼성전자",
       "code": "005930",
-      "current_price": 256000.0
+      "current_price": 252500.0
     },
     {
       "id": "mt9f6pv9quom",
       "market": "domestic",
       "name": "삼성전기",
       "code": "009150",
-      "current_price": 1351000.0
+      "current_price": 1330000.0
     },
     {
       "id": "mtgun0a9nxpi",
       "market": "domestic",
       "name": "한화에어로스페이스",
       "code": "012450",
-      "current_price": 1098000.0
+      "current_price": 1097000.0
     },
     {
       "id": "mtguoexqb807",
       "market": "overseas",
       "name": "YieldMax TSLA Option Income Str",
       "code": "TSLY",
-      "current_price": 22.110000610351562
+      "current_price": 22.309999465942383
     },
     {
       "id": "mtguou7ud536",
       "market": "overseas",
       "name": "Tesla, Inc.",
       "code": "TSLA",
-      "current_price": 358.0799865722656
+      "current_price": 366.20001220703125
     }
   ],
   "portfolio_summary": {
