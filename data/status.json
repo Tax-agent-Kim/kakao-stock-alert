@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-24T08:50:15.766994+09:00",
+  "updated_at": "2026-10-26T22:27:54.568473+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -8,13 +8,13 @@
       "code": "069500",
       "buy_price": 112000,
       "quantity": 1,
-      "current_price": 87075.0,
-      "change_pct": -22.25,
+      "current_price": 85995.0,
+      "change_pct": -23.22,
       "signal_type": "buy",
       "signal_label": "추가매수 10%",
       "buy_amount": 112000,
-      "eval_amount": 87075.0,
-      "profit_amount": -24925.0
+      "eval_amount": 85995.0,
+      "profit_amount": -26005.0
     }
   ],
   "watchlist": [
@@ -23,7 +23,7 @@
       "market": "domestic",
       "name": "SK하이닉스",
       "code": "000660",
-      "current_price": 1263000.0
+      "current_price": 1290000.0
     },
     {
       "id": "mt7za8ry2cs7",
@@ -37,14 +37,14 @@
       "market": "domestic",
       "name": "삼성전기",
       "code": "009150",
-      "current_price": 1111000.0
+      "current_price": 1118000.0
     },
     {
       "id": "mtgun0a9nxpi",
       "market": "domestic",
       "name": "한화에어로스페이스",
       "code": "012450",
-      "current_price": 786000.0
+      "current_price": 753000.0
     },
     {
       "id": "mtguoexqb807",
@@ -63,8 +63,8 @@
   ],
   "portfolio_summary": {
     "total_buy_amount": 112000,
-    "total_eval_amount": 87075.0,
-    "total_profit_amount": -24925.0,
-    "total_profit_pct": -22.25
+    "total_eval_amount": 85995.0,
+    "total_profit_amount": -26005.0,
+    "total_profit_pct": -23.22
   }
 }
