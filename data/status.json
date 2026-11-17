@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-17T01:18:29.437542+09:00",
+  "updated_at": "2026-11-17T12:43:25.129868+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -8,13 +8,13 @@
       "code": "069500",
       "buy_price": 112000,
       "quantity": 1,
-      "current_price": 79900.0,
-      "change_pct": -28.66,
+      "current_price": 78990.0,
+      "change_pct": -29.47,
       "signal_type": "buy",
       "signal_label": "추가매수 25%",
       "buy_amount": 112000,
-      "eval_amount": 79900.0,
-      "profit_amount": -32100.0
+      "eval_amount": 78990.0,
+      "profit_amount": -33010.0
     }
   ],
   "watchlist": [
@@ -23,48 +23,48 @@
       "market": "domestic",
       "name": "SK하이닉스",
       "code": "000660",
-      "current_price": 1118000.0
+      "current_price": 1130000.0
     },
     {
       "id": "mt7za8ry2cs7",
       "market": "domestic",
       "name": "삼성전자",
       "code": "005930",
-      "current_price": 195000.0
+      "current_price": 192700.0
     },
     {
       "id": "mt9f6pv9quom",
       "market": "domestic",
       "name": "삼성전기",
       "code": "009150",
-      "current_price": 779000.0
+      "current_price": 771000.0
     },
     {
       "id": "mtgun0a9nxpi",
       "market": "domestic",
       "name": "한화에어로스페이스",
       "code": "012450",
-      "current_price": 650000.0
+      "current_price": 628000.0
     },
     {
       "id": "mtguoexqb807",
       "market": "overseas",
       "name": "YieldMax TSLA Option Income Str",
       "code": "TSLY",
-      "current_price": 20.885000228881836
+      "current_price": 20.799999237060547
     },
     {
       "id": "mtguou7ud536",
       "market": "overseas",
       "name": "Tesla, Inc.",
       "code": "TSLA",
-      "current_price": 381.2701110839844
+      "current_price": 379.739990234375
     }
   ],
   "portfolio_summary": {
     "total_buy_amount": 112000,
-    "total_eval_amount": 79900.0,
-    "total_profit_amount": -32100.0,
-    "total_profit_pct": -28.66
+    "total_eval_amount": 78990.0,
+    "total_profit_amount": -33010.0,
+    "total_profit_pct": -29.47
   }
 }
