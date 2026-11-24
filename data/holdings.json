@@ -7,6 +7,13 @@
       "code": "069500",
       "buy_price": 112000,
       "quantity": 1
+    },
+    {
+      "id": "mwum5o82q1l6",
+      "market": "overseas",
+      "name": "YieldMax TSLA Option Income Str",
+      "code": "TSLY",
+      "buy_price": 40
     }
   ],
   "watchlist": [
