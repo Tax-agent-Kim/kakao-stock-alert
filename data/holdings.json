@@ -15,6 +15,14 @@
       "code": "TSLY",
       "buy_price": 40,
       "quantity": 110
+    },
+    {
+      "id": "mwum6x9m49o7",
+      "market": "overseas",
+      "name": "YieldMax TSLA Option Income Str",
+      "code": "TSLY",
+      "buy_price": 40,
+      "quantity": 110
     }
   ],
   "watchlist": [
