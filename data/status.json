@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-24T20:32:19.898398+09:00",
+  "updated_at": "2026-11-25T03:09:36.181856+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -23,13 +23,13 @@
       "code": "TSLY",
       "buy_price": 40,
       "quantity": 110,
-      "current_price": 20.799999237060547,
-      "change_pct": -48.0,
+      "current_price": 20.740100860595703,
+      "change_pct": -48.15,
       "signal_type": "buy",
       "signal_label": "추가매수 25%",
       "buy_amount": 4400,
-      "eval_amount": 2288.0,
-      "profit_amount": -2112.0
+      "eval_amount": 2281.41,
+      "profit_amount": -2118.59
     },
     {
       "id": "mwum6x9m49o7",
@@ -38,13 +38,13 @@
       "code": "TSLY",
       "buy_price": 40,
       "quantity": 110,
-      "current_price": 20.799999237060547,
-      "change_pct": -48.0,
+      "current_price": 20.740100860595703,
+      "change_pct": -48.15,
       "signal_type": "buy",
       "signal_label": "추가매수 25%",
       "buy_amount": 4400,
-      "eval_amount": 2288.0,
-      "profit_amount": -2112.0
+      "eval_amount": 2281.41,
+      "profit_amount": -2118.59
     }
   ],
   "watchlist": [
@@ -81,20 +81,20 @@
       "market": "overseas",
       "name": "YieldMax TSLA Option Income Str",
       "code": "TSLY",
-      "current_price": 20.799999237060547
+      "current_price": 20.740100860595703
     },
     {
       "id": "mtguou7ud536",
       "market": "overseas",
       "name": "Tesla, Inc.",
       "code": "TSLA",
-      "current_price": 385.4599914550781
+      "current_price": 384.2650146484375
     }
   ],
   "portfolio_summary": {
     "total_buy_amount": 120800,
-    "total_eval_amount": 83236.0,
-    "total_profit_amount": -37564.0,
-    "total_profit_pct": -31.1
+    "total_eval_amount": 83222.82,
+    "total_profit_amount": -37577.18,
+    "total_profit_pct": -31.11
   }
 }
