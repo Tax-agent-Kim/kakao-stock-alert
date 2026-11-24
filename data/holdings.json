@@ -13,7 +13,8 @@
       "market": "overseas",
       "name": "YieldMax TSLA Option Income Str",
       "code": "TSLY",
-      "buy_price": 40
+      "buy_price": 40,
+      "quantity": 110
     }
   ],
   "watchlist": [
