@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-25T13:05:42.471815+09:00",
+  "updated_at": "2026-11-26T02:32:08.288180+09:00",
   "holdings": [
     {
       "id": "mt6q0zsx6ljf",
@@ -8,13 +8,13 @@
       "code": "069500",
       "buy_price": 112000,
       "quantity": 1,
-      "current_price": 73435.0,
-      "change_pct": -34.43,
+      "current_price": 73140.0,
+      "change_pct": -34.7,
       "signal_type": "buy",
       "signal_label": "추가매수 25%",
       "buy_amount": 112000,
-      "eval_amount": 73435.0,
-      "profit_amount": -38565.0
+      "eval_amount": 73140.0,
+      "profit_amount": -38860.0
     },
     {
       "id": "mwum5o82q1l6",
@@ -23,13 +23,13 @@
       "code": "TSLY",
       "buy_price": 40,
       "quantity": 110,
-      "current_price": 20.739999771118164,
-      "change_pct": -48.15,
+      "current_price": 19.989999771118164,
+      "change_pct": -50.03,
       "signal_type": "buy",
       "signal_label": "추가매수 25%",
       "buy_amount": 4400,
-      "eval_amount": 2281.4,
-      "profit_amount": -2118.6
+      "eval_amount": 2198.9,
+      "profit_amount": -2201.1
     },
     {
       "id": "mwum6x9m49o7",
@@ -38,13 +38,13 @@
       "code": "TSLY",
       "buy_price": 40,
       "quantity": 110,
-      "current_price": 20.739999771118164,
-      "change_pct": -48.15,
+      "current_price": 19.989999771118164,
+      "change_pct": -50.03,
       "signal_type": "buy",
       "signal_label": "추가매수 25%",
       "buy_amount": 4400,
-      "eval_amount": 2281.4,
-      "profit_amount": -2118.6
+      "eval_amount": 2198.9,
+      "profit_amount": -2201.1
     }
   ],
   "watchlist": [
@@ -53,48 +53,48 @@
       "market": "domestic",
       "name": "SK하이닉스",
       "code": "000660",
-      "current_price": 1049000.0
+      "current_price": 1014000.0
     },
     {
       "id": "mt7za8ry2cs7",
       "market": "domestic",
       "name": "삼성전자",
       "code": "005930",
-      "current_price": 171300.0
+      "current_price": 166900.0
     },
     {
       "id": "mt9f6pv9quom",
       "market": "domestic",
       "name": "삼성전기",
       "code": "009150",
-      "current_price": 767000.0
+      "current_price": 748000.0
     },
     {
       "id": "mtgun0a9nxpi",
       "market": "domestic",
       "name": "한화에어로스페이스",
       "code": "012450",
-      "current_price": 632000.0
+      "current_price": 622000.0
     },
     {
       "id": "mtguoexqb807",
       "market": "overseas",
       "name": "YieldMax TSLA Option Income Str",
       "code": "TSLY",
-      "current_price": 20.739999771118164
+      "current_price": 19.989999771118164
     },
     {
       "id": "mtguou7ud536",
       "market": "overseas",
       "name": "Tesla, Inc.",
       "code": "TSLA",
-      "current_price": 384.67999267578125
+      "current_price": 367.2699890136719
     }
   ],
   "portfolio_summary": {
     "total_buy_amount": 120800,
-    "total_eval_amount": 77997.8,
-    "total_profit_amount": -42802.2,
-    "total_profit_pct": -35.43
+    "total_eval_amount": 77537.8,
+    "total_profit_amount": -43262.2,
+    "total_profit_pct": -35.81
   }
 }
